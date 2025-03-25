@@ -25,6 +25,6 @@ Follow the steps below to get the backend up and running:
    ```bash
    mvn clean install
 4. **Start the Application** ▶️
-Once the build is complete, run the following command to start the backend:
-```bash
-  mvn spring-boot:run
+   Once the build is complete, run the following command to start the backend:
+   ```bash
+   mvn spring-boot:run
