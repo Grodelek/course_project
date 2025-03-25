@@ -23,14 +23,19 @@ public class UserController {
 
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
-    return userService.authenticate(userDTO);
+    try {
+      userService.authenticate(userDTO);
+      return ResponseEntity.ok("Login successful");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
   }
 
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody UserDTO userForm) {
     try {
-      User registeredUser = userService.register(userForm);
-      return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+      userService.register(userForm);
+      return ResponseEntity.ok("User registered successfully");
     } catch (IllegalStateException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }

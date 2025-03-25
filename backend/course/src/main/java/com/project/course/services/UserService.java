@@ -24,7 +24,7 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public ResponseEntity<?> authenticate(@RequestBody UserDTO userForm) {
+  public ResponseEntity<?> authenticate(UserDTO userForm) {
     Optional<User> optionalUser = userRepository.findByEmail(userForm.getEmail());
     if (optionalUser.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
@@ -36,7 +36,7 @@ public class UserService {
     return ResponseEntity.ok("Login successful");
   }
 
-  public User register(@RequestBody UserDTO userForm) {
+  public User register(UserDTO userForm) {
     if (userForm.getEmail().isEmpty()) {
       throw new IllegalStateException("Email cannot be empty!");
     }
