@@ -1,6 +1,6 @@
 import "./globals.css";
-import Navigation from "./navigation";
-import logoImg from '@/assets/logo3.png';
+
+import Header from "./components/main/header";
 
 
 export const metadata = {
@@ -14,11 +14,8 @@ export default function RootLayout({ children }) {
       <body
         className=""
       >
-        <header>
-        <img src={logoImg.src} alt="Logo strony" width="100" height="100"/>
-        <Navigation />
-        </header>
-        <main>
+        <Header />
+        <main className="mt-20">
           <div className="m-10 rounded-xl bg-[#EEEEEE] min-h-9/10">
             {children}
           </div>
