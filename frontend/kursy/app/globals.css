@@ -34,8 +34,6 @@ header {
   background: lightcyan;
   justify-content: space-between;
   background-image: url('../assets/bg.svg');
-  background-repeat: repeat;
-  background-attachment: scroll;
 }
 
 footer {
