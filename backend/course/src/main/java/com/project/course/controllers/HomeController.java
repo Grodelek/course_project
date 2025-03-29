@@ -13,4 +13,5 @@ public class HomeController {
   public ResponseEntity<String> getMessage() {
     return ResponseEntity.ok("Hello world!");
   }
+
 }
