@@ -5,7 +5,7 @@
 Before you begin, ensure that the following are installed on your machine:
 
 - **Java 24** 
-- **Maven 3.8.7** 
+- **Maven 3.8.7** or later
 
 ---
 
