@@ -1,15 +1,44 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function Logowanie() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const router = useRouter();
+  const [error, setError] = useState("");
   //wysłanie formularza
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email, "Hasło:", password);
+        setError("");
+        try {
+
+            const response = await fetch("http://localhost:8080/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Błąd ${response.status}: ${errorText}`);
+            }
+            const token = await response.text();
+
+            if (token) {
+                localStorage.setItem("token", token);
+                localStorage.setItem("username", email);
+                router.push('/');
+            } else {
+                throw new Error("Brak tokena w odpowiedzi serwera");
+            }
+
+        } catch (err) {
+            setError(err.message);
+        }
   };
 
   return (

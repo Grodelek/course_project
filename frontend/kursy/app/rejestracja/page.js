@@ -1,15 +1,36 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function Rejestracja() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [error, setError] = useState("");
+  const router = useRouter();
   //wysłanie formularza
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    try {
+            router.push('/logowanie');
+            const response = await fetch("http://localhost:8080/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Błąd ${response.status}: ${errorText}`);
+            }
+
+        } catch (err) {
+            setError(err.message);
+        }
   };
 
   return (
