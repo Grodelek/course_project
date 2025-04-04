@@ -2,6 +2,9 @@ package com.project.course.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -16,6 +19,16 @@ public class User {
   private String roles;
   @Column(name = "isConfirmed")
   private char isConfirmed;
+  @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, orphanRemoval = false)
+  private List<Ban> listBan = new ArrayList<>();
+
+  public List<Ban> getListBan() {
+    return listBan;
+  }
+
+  public void setListBan(List<Ban> listBan) {
+    this.listBan = listBan;
+  }
 
   public char getIsConfirmed() {
     return isConfirmed;
