@@ -71,7 +71,6 @@ public class UserController {
   public String authenticate(@RequestBody VerificationCodeDTO verificationCode, @RequestParam String email) {
     UserVerification storedVerification = userVerificationCodeService.findByEmail(email);
     Optional<User> userOptional = userService.findByEmail(email);
-
     if (userOptional.isPresent()) {
       User user = userOptional.get();
       if (storedVerification != null
@@ -80,7 +79,7 @@ public class UserController {
         userService.save(user);
         return "Account verified";
       }
-      return "Invalid verification code"; // Added this for clarity
+      return "Invalid verification code"; 
     } else {
       return "Failed";
     }
