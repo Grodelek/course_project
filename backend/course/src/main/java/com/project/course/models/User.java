@@ -11,7 +11,7 @@ public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-  @Column(name = "email")
+  @Column(name = "email", unique = true)
   private String email;
   @Column(name = "password")
   private String password;
@@ -19,7 +19,8 @@ public class User {
   private String roles;
   @Column(name = "isConfirmed")
   private char isConfirmed;
-  @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, orphanRemoval = false)
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = false)
   private List<Ban> listBan = new ArrayList<>();
 
   public List<Ban> getListBan() {

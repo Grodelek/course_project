@@ -7,48 +7,49 @@ import java.util.Date;
 @Entity
 @Table(name = "ban")
 public class Ban {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(name = "date_start")
-    private Date date_start;
-    @Column(name = "date_end")
-    private Date date_end;
-    @Column(name = "reason")
-    private String reason;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users.id")
-    private User user;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
+  @Column(name = "date_start")
+  private Date date_start;
+  @Column(name = "date_end")
+  private Date date_end;
+  @Column(name = "reason")
+  private String reason;
 
-    public Date getDate_start() {
-        return date_start;
-    }
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-    public void setDate_start(Date date_start) {
-        this.date_start = date_start;
-    }
+  public Date getDate_start() {
+    return date_start;
+  }
 
-    public Date getDate_end() {
-        return date_end;
-    }
+  public void setDate_start(Date date_start) {
+    this.date_start = date_start;
+  }
 
-    public void setDate_end(Date date_end) {
-        this.date_end = date_end;
-    }
+  public Date getDate_end() {
+    return date_end;
+  }
 
-    public String getReason() {
-        return reason;
-    }
+  public void setDate_end(Date date_end) {
+    this.date_end = date_end;
+  }
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+  public String getReason() {
+    return reason;
+  }
 
-    public User getUser() {
-        return user;
-    }
+  public void setReason(String reason) {
+    this.reason = reason;
+  }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
 }

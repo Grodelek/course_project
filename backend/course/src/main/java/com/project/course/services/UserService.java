@@ -36,6 +36,14 @@ public class UserService {
     return user;
   }
 
+  public Optional<User> findByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
+  public void save(User user) {
+    userRepository.save(user);
+  }
+
   public String verify(User user) {
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));

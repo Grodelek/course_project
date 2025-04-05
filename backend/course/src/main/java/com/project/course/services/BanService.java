@@ -11,19 +11,20 @@ import java.util.Optional;
 
 @Service
 public class BanService {
-    private final BanRepository banRepository;
-    private final UserRepository userRepository;
+  private final BanRepository banRepository;
+  private final UserRepository userRepository;
 
-    @Autowired
-    public BanService(BanRepository banRepository, UserRepository userRepository) {
-        this.banRepository = banRepository;
-        this.userRepository = userRepository;
-    }
-    public ResponseEntity<?> giveBan(User user){
-        Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
-        if(optionalUser.isPresent()){
-            user = optionalUser.get();;
-            banRepository.
-        }
-    }
+  @Autowired
+  public BanService(BanRepository banRepository, UserRepository userRepository) {
+    this.banRepository = banRepository;
+    this.userRepository = userRepository;
+  }
+  /*
+   * public ResponseEntity<?> giveBan(User user){
+   * Optional<User> optionalUser = userRepository.findByEmail(user.getEmail());
+   * if(optionalUser.isPresent()){
+   * user = optionalUser.get();;
+   * }
+   * }
+   */
 }
