@@ -44,13 +44,23 @@ public class UserService {
     userRepository.save(user);
   }
 
-  public String verify(User user) {
+  public ResponseEntity<String> verify(User user) {
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-    if (authentication.isAuthenticated()) {
-      return jwtService.generateToken(user.getEmail());
+    Optional<User> userOptional = findByEmail(user.getEmail());
+    if (userOptional.isPresent()) {
+      User presentUser = userOptional.get();
+      if (presentUser.getIsConfirmed() == '1') {
+        if (authentication.isAuthenticated()) {
+          return ResponseEntity.ok(jwtService.generateToken(user.getEmail()));
+        } else {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+        }
+      } else {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not confirmed");
+      }
     } else {
-      return "failed";
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
   }
 }

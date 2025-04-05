@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,7 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public String login(@RequestBody User user) {
+  public ResponseEntity<String> login(@RequestBody User user) {
     return userService.verify(user);
   }
 
