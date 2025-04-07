@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import Navigation from "../navigation/navigation";
 
 export default function LoggedIn(){
+    const userName = 'Filip';
     const videos = [
         "https://www.youtube.com/embed/0M1C9yEzplI?autoplay=1&mute=1",
         "https://www.youtube.com/embed/20pvrDle36o?autoplay=1&mute=1",
@@ -21,30 +23,31 @@ export default function LoggedIn(){
 
     return (
     <section
-          className="relative w-full h-screen bg-cover bg-center flex flex-col justify-center items-center"
+          className="relative w-full h-screen bg-cover bg-center flex flex-col justify-center items-center pt-20"
           style={{ backgroundImage: 'url("/tloStart.png")' }}
         >
+          <Navigation userName={userName}/>
           <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80" />
 
           <div className="relative z-10 text-center text-white px-6 max-w-2xl">
             <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              Zalogowany!!!!
+              Witaj, {userName}!
             </h1>
             <p className="text-lg md:text-xl mb-8">
               Zdobądź nowe umiejętności i rozwijaj swoją karierę dzięki naszym kursom.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/rejestracja"
+                href="/courses"
                 className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-md font-semibold transition"
               >
-                Zarejestruj się
+                Przejrzyj kursy
               </Link>
               <Link
-                href="/logowanie"
+                href="/roadmaps"
                 className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md font-semibold transition"
               >
-                Zaloguj się
+                Przejrzyj Roadmapy
               </Link>
             </div>
           </div>
