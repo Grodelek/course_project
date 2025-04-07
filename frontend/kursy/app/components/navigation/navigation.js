@@ -1,8 +1,17 @@
+import { useEffect } from "react";
 import NavLink from "./navlink";
 import { FaHome, FaChalkboard, FaSignOutAlt, FaCog, FaRoute, FaUserAlt } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function Navigation({userName}) {
   const userProfileImage = "";
+  const router = useRouter();
+  const handleSubmit = () =>{
+    localStorage.clear();
+    router.replace('/');
+    window.location.reload();
+  }
+
   return (
     <nav className="fixed top-0 left-0 w-full bg-white/10 backdrop-blur-md text-white py-3 px-8 
                     flex justify-between items-center border-b border-white/20 z-50 shadow-md">
@@ -36,7 +45,8 @@ export default function Navigation({userName}) {
       </div>
 
       <button className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 
-                         rounded-lg transition font-semibold shadow-lg">
+                         rounded-lg transition font-semibold shadow-lg"
+                         onClick={handleSubmit}>
         <FaSignOutAlt />
         <span>Wyloguj się</span>
       </button>
