@@ -1,10 +1,44 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 
 export default function Authenticate() {
-    const email = 'test@example.com';
+    const [email, setEmail] = useState("");
+    useEffect(() => {
+      const storedEmail = localStorage.getItem("email");
+      setEmail(storedEmail);
+    }, []);
+
+    const [verificationCode, setVerificationCode] = useState("");
+    const [error, setError] = useState("");
+    const router = useRouter();
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError("");
+      try {
+              
+              
+              const response = await fetch("http://localhost:8080/authenticate?email="+email, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ verificationCode }),
+              });
+  
+              if (!response.ok) {
+                  const errorText = await response.text();
+                  throw new Error(`Błąd ${response.status}: ${errorText}`);
+              }
+
+              router.push('/logowanie');
+  
+          } catch (err) {
+              setError(err.message);
+          }
+    };
+
     return (
         <section className="flex w-full h-screen">
           <div className="w-full md:w-1/2 bg-gray-900 text-white flex flex-col justify-center p-8">
@@ -24,11 +58,14 @@ export default function Authenticate() {
                         pattern="[0-9]*"
                         placeholder="Wprowadź kod weryfikacyjny"
                         className="w-full px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
                     />
 
                     <button
                         type="submit"
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition duration-200"
+                        onClick={handleSubmit}
                     >
                         Potwierdź
                     </button>

@@ -62,9 +62,7 @@ public class UserController {
     userVerification.setEmail(user.getEmail());
     userVerification.setVerificationCode(verificationCode);
     userVerificationCodeService.save(userVerification);
-    emailSenderService.sendEmail(user.getEmail(),
-        "Spring User Account verification",
-        verificationCode);
+    emailSenderService.sendEmail(user.getEmail(), "Spring User Account verification", verificationCode);
     return userService.register(user);
   }
 

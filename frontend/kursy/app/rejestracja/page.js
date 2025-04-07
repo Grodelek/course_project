@@ -14,7 +14,8 @@ export default function Rejestracja() {
     e.preventDefault();
     setError("");
     try {
-            router.push('/logowanie');
+            localStorage.setItem("email", email);
+            router.push('/authenticate');
             const response = await fetch("http://localhost:8080/register", {
                 method: "POST",
                 headers: {
