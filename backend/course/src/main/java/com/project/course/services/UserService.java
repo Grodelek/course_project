@@ -1,14 +1,18 @@
 package com.project.course.services;
 
 import com.project.course.exceptions.UserAlreadyExistsException;
+import com.project.course.models.Ban;
 import com.project.course.models.User;
 import com.project.course.models.UserDTO;
 import com.project.course.models.UserVerification;
+import com.project.course.repositories.BanRepository;
 import com.project.course.repositories.UserRepository;
+
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
 
@@ -31,6 +35,7 @@ public class UserService {
   private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
   private final UserVerificationCodeService userVerificationCodeService;
   private final EmailSenderService emailSenderService;
+  private final BanRepository banRepository;
 
   @Autowired
   public UserService(UserRepository userRepository,
@@ -38,13 +43,15 @@ public class UserService {
       AuthenticationManager authenticationManager,
       JWTService jwtService,
       UserVerificationCodeService userVerificationCodeService,
-      EmailSenderService emailSenderService) {
+      EmailSenderService emailSenderService,
+      BanRepository banRepository               ) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.jwtService = jwtService;
     this.userVerificationCodeService = userVerificationCodeService;
     this.emailSenderService = emailSenderService;
+    this.banRepository = banRepository;
   }
 
   public Optional<User> findByEmail(String email) {
@@ -100,7 +107,15 @@ public class UserService {
     if (userOptional.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
-
+    Optional<Ban> banOptional = banRepository.findByEmail(user.getEmail());
+    if (banOptional.isPresent()) {
+      Ban ban = banOptional.get();
+      Date now = new Date();
+      if (ban.getDate_end().after(now)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ban.getDate_start() + "|" + ban.getDate_end() + "|" + ban.getReason());
+      }
+    }
     User presentUser = userOptional.get();
     if (presentUser.getIsConfirmed() == '1') {
       if (authentication.isAuthenticated()) {

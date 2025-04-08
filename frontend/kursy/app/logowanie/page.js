@@ -23,8 +23,18 @@ export default function Logowanie() {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
+              const errorText = await response.text();
+              if (response.status === 403){
+                var banItems = errorText.split('|');
+                localStorage.setItem("username", email);
+                localStorage.setItem("banStart", banItems[0]);
+                localStorage.setItem("banEnd", banItems[1]);
+                localStorage.setItem("banReason", banItems[2]);
+                router.push('/');
+              }
+              else{
                 throw new Error(`Błąd ${response.status}: ${errorText}`);
+              }
             }
             const token = await response.text();
 
