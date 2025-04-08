@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @Service
 public class BanService {
   private final BanRepository banRepository;
@@ -21,16 +19,16 @@ public class BanService {
     this.banRepository = banRepository;
     this.userRepository = userRepository;
   }
+
   @Transactional
-  public ResponseEntity<?> giveBan(Ban ban){
-    if(userRepository.existsByEmail(ban.getEmail())) {
+  public ResponseEntity<?> giveBan(Ban ban) {
+    if (userRepository.existsByEmail(ban.getEmail())) {
 
       banRepository.save(ban);
       return ResponseEntity.status(HttpStatus.CREATED).body(ban);
-    }
-    else{
+    } else {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not existing");
     }
 
-   }
+  }
 }
