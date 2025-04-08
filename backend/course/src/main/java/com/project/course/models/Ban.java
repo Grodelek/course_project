@@ -16,10 +16,16 @@ public class Ban {
   private Date date_end;
   @Column(name = "reason")
   private String reason;
+  @Column(name = "email")
+  private String email;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
   public Date getDate_start() {
     return date_start;
@@ -45,11 +51,4 @@ public class Ban {
     this.reason = reason;
   }
 
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
 }
