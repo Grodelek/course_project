@@ -9,12 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-
 import com.project.course.models.Course;
 import com.project.course.models.CourseDTO;
 import com.project.course.repositories.CourseRepository;
-
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Service
