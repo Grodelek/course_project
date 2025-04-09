@@ -77,7 +77,7 @@ export default function Logowanie() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-2 text-gray-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500"
+              className="w-full p-2 text-black-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
 
@@ -92,7 +92,7 @@ export default function Logowanie() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-2 text-gray-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500"
+              className="w-full p-2 text-black-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500"
             />
           </div>
 
