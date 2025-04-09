@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,6 +23,25 @@ public class Course {
   private String length;
   @Column(name = "rating")
   private int rating;
+  @ManyToOne
+  @JoinColumn(name = "roadmap_id")
+  private Roadmap roadmap;
+
+  public Roadmap getRoadmap() {
+    return roadmap;
+  }
+
+  public void setRoadmap(Roadmap roadmap) {
+    this.roadmap = roadmap;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getName() {
     return this.name;
