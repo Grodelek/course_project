@@ -1,10 +1,17 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navigation from "../navigation/navigation";
 
 export default function LoggedIn(){
-    const userName = 'Filip';
+    const [userName, setUserName] = useState("");
+    useEffect(() => {
+          if (typeof window !== "undefined") {
+            setUserName(localStorage.getItem("username") || "Unknown");
+            //setUserName(userName.replace(re, ''));
+          }
+        }, []);
+    
     const videos = [
         "https://www.youtube.com/embed/0M1C9yEzplI?autoplay=1&mute=1",
         "https://www.youtube.com/embed/20pvrDle36o?autoplay=1&mute=1",

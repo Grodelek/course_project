@@ -1,3 +1,4 @@
+"use client"
 import { useEffect } from "react";
 import NavLink from "./navlink";
 import { FaHome, FaChalkboard, FaSignOutAlt, FaCog, FaRoute, FaUserAlt } from "react-icons/fa";

@@ -1,19 +1,39 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navigation from "../components/navigation/navigation.js";
 
 export default function Courses() {
+  //const [coursesData, setCoursesData] = useState([]);
+  const [coursesData, setCoursesData] = useState([]);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    async function fetchData(){
+      setError("");
+      try {
+
+          const response = await fetch("http://localhost:8080/course/all", {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          });
+
+          if (!response.ok) {
+              throw new Error(`Błąd `);
+          }
+          const data = await response.json();
+          setCoursesData(data);
+
+      } catch (err) {
+          setError(err.message);
+      }
+    }
+    fetchData();
+          }, []);
+
   const userName = 'Filip';
-  const coursesData = [
-    {
-      id: 1,
-      title: "Web Mejster",
-      description: "Opanuj HTML",
-      length: "5h",
-      rating: 4,
-    },
-  ];
+
 
   // paginacja
   const itemsPerPage = 3;
@@ -65,7 +85,7 @@ export default function Courses() {
             <tbody>
               {currentData.map((course) => (
                 <tr key={course.id} className="border-b border-white/20">
-                  <td className="px-6 py-4 whitespace-nowrap">{course.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{course.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{course.length}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {Array.from({ length: 5 }).map((_, i) => (
