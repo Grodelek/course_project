@@ -21,6 +21,27 @@ export default function Navigation() {
       setName(stored);
       return;
     }
+    const token = localStorage.getItem("token");
+    const email = localStorage.getItem("email");
+
+    fetch(`http://localhost:8080/user/username?email=${email}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        if(!res.ok) {
+          return res.text().then((text) => {
+            console.error("cos",text || "pusty");
+          })
+        }
+        return res.text();
+      })
+      .then((username) => {
+        setName(username);
+        localStorage.setItem("userName",username);
+      })
   
   }, []);
   

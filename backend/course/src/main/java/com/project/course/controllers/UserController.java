@@ -42,5 +42,11 @@ public class UserController {
     return userService.authenticate(verificationCode, email);
   }
 
+  @GetMapping("/user/username")
+  public ResponseEntity<?> getUserName(@RequestParam String email) {
+    return userService.findByEmail(email)
+            .map(user -> ResponseEntity.ok(user.getUsername()))
+            .orElse(ResponseEntity.notFound().build());
+  }
 
 }

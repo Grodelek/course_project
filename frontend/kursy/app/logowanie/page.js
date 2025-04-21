@@ -74,7 +74,7 @@ export default function Logowanie() {
 
             if (token) {
                 localStorage.setItem("token", token);
-                localStorage.setItem("username", email);
+                localStorage.setItem("email", email);
                 router.push('/');
             } else {
                 throw new Error("Brak tokena w odpowiedzi serwera");
