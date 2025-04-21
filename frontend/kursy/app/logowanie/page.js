@@ -2,16 +2,37 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
+import Error from "../components/ui/Error.js";
+
 
 export default function Logowanie() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const [error, setError] = useState("");
+  const [errorTop, setErrorTop]   = useState("");
+  const [modalData, setModalData] = useState({ msg: "", gif: "" });
+  const [showError, setShowError] = useState(false);
+  const [invalidFields, setInvalidFields] = useState([]);
   //wysłanie formularza
   const handleSubmit = async (e) => {
     e.preventDefault();
-        setError("");
+        setErrorTop("");
+        setInvalidFields([]);
+
+        const missing = [];
+        if (!email.trim())    missing.push("email");
+        if (!password.trim()) missing.push("password");
+        if (missing.length) {
+          setInvalidFields(missing);
+          setErrorTop("Uzupełnij wszystkie wymagane pola.");
+          setModalData({
+            msg: "Za mało nam o sobie napisałeś! Musisz podać nazwę, e‑mail i hasło, aby utworzyć konto.",
+            gif: "/oops2.gif",
+          });
+          setShowError(true);
+          return;
+        }
+
         try {
 
             const response = await fetch("http://localhost:8080/login", {
@@ -32,15 +53,28 @@ export default function Logowanie() {
                 localStorage.setItem("banReason", banItems[2]);
                 router.push('/');
               }
+              else if (response.status === 401 || response.status === 400) {
+                setErrorTop("Niepoprawny e‑mail lub hasło");
+                setModalData({
+                  msg: "Spróbuj ponownie się zalogować lub zarejestruj się!",
+                  gif: "/oops.gif",
+                });
+                setShowError(true);
+                setInvalidFields(["email", "password"]);
+                return;
+              }
               else{
-                throw new Error(`Błąd ${response.status}: ${errorText}`);
+                //throw new Error(`Błąd ${response.status}: ${errorText}`);
+                setErrorTop(`Błąd ${res.status}: ${msg}`);
+                setShowError(true);
               }
             }
+            
             const token = await response.text();
 
             if (token) {
                 localStorage.setItem("token", token);
-                localStorage.setItem("username", email);
+                localStorage.setItem("email", email);
                 router.push('/');
             } else {
                 throw new Error("Brak tokena w odpowiedzi serwera");
@@ -52,18 +86,34 @@ export default function Logowanie() {
   };
 
   return (
+    <>
+    {showError && (
+      <Error
+      msg={modalData.msg}
+      gif={modalData.gif}
+      onClose={() => setShowError(false)}
+      />
+    )}
     <section className="flex w-full h-screen">
       <div className="w-full md:w-1/2 bg-gray-900 text-white flex flex-col justify-center p-8">
         <div className="max-w-md mx-auto w-full">
           <h1 className="text-3xl font-bold mb-6">Zaloguj się</h1>
-
+          {errorTop && (
+  <div className="mb-4 bg-red-600/90 text-white p-3 rounded">
+    {errorTop}
+  </div>
+)}
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
-            <button className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded font-semibold transition">
-              Zaloguj się z Google
-            </button>
-            <button className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded font-semibold transition">
-              Zaloguj się z Apple
-            </button>
+          <button type="button" className="w-full flex items-center justify-center gap-x-2
+                     bg-gray-700 hover:bg-gray-600 py-2 rounded
+                     font-semibold transition">
+    <img
+      src="/google.png"
+      alt="Google"
+      className="w-6 h-6"
+    />
+    <span>Zaloguj się z Google</span>
+  </button>
           </div>
 
           <div className="mb-4">
@@ -77,7 +127,12 @@ export default function Logowanie() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-2 text-gray-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500"
+              className={`w-full p-2 text-black-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500
+              ${
+                  invalidFields.includes("email")
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-gray-700 focus:border-blue-500"
+                }`}
             />
           </div>
 
@@ -92,7 +147,12 @@ export default function Logowanie() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-2 text-gray-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500"
+              className={`w-full p-2 text-black-900 border border-gray-700 rounded focus:outline-none focus:border-blue-500
+              ${
+                invalidFields.includes("password")
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-700 focus:border-blue-500"
+              }`}
             />
           </div>
 
@@ -138,5 +198,6 @@ export default function Logowanie() {
         </div>
       </div>
     </section>
+    </>
   );
 }

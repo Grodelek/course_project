@@ -14,6 +14,8 @@ public class User {
   private String password;
   @Column(name = "roles")
   private String roles;
+  @Column(name = "userName")
+  private String username;
   @Column(name = "isConfirmed")
   private char isConfirmed;
 
@@ -56,4 +58,7 @@ public class User {
   public void setPassword(String password) {
     this.password = password;
   }
+
+  public String getUsername() { return username; }
+  public void setUsername(String username) { this.username = username; }
 }
