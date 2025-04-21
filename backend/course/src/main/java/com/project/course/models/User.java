@@ -3,17 +3,19 @@ package com.project.course.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-  @Column(name = "email")
+  @Column(name = "email", unique = true)
   private String email;
   @Column(name = "password")
   private String password;
   @Column(name = "roles")
   private String roles;
+  @Column(name = "userName")
+  private String username;
   @Column(name = "isConfirmed")
   private char isConfirmed;
 
@@ -56,4 +58,7 @@ public class User {
   public void setPassword(String password) {
     this.password = password;
   }
+
+  public String getUsername() { return username; }
+  public void setUsername(String username) { this.username = username; }
 }
