@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.project.course.models.UserDTO;
 import com.project.course.models.VerificationCodeDTO;
 import com.project.course.services.UserService;
@@ -48,4 +49,12 @@ public class UserController {
   public ResponseEntity<?> authenticate(@RequestBody VerificationCodeDTO verificationCode, @RequestParam String email) {
     return userService.authenticate(verificationCode, email);
   }
+
+  @GetMapping("/user/username")
+  public ResponseEntity<?> getUserName(@RequestParam String email) {
+    return userService.findByEmail(email)
+            .map(user -> ResponseEntity.ok(user.getUsername()))
+            .orElse(ResponseEntity.notFound().build());
+  }
+
 }

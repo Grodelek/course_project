@@ -61,6 +61,8 @@ public class UserService {
     userRepository.save(user);
   }
 
+
+
   public static String generateCode() {
     Random random = new Random();
     StringBuilder code = new StringBuilder();
@@ -76,6 +78,7 @@ public class UserService {
       throw new UserAlreadyExistsException("User already has an account.");
     }
     User user = new User();
+    user.setUsername(userDTO.getUsername());
     user.setEmail(userDTO.getEmail());
     user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
     user.setRoles("USER");

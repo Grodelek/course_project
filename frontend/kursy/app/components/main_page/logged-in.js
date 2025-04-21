@@ -7,7 +7,7 @@ export default function LoggedIn(){
     const [userName, setUserName] = useState("");
     useEffect(() => {
           if (typeof window !== "undefined") {
-            setUserName(localStorage.getItem("username") || "Unknown");
+            setUserName(localStorage.getItem("userName") || "Unknown");
             //setUserName(userName.replace(re, ''));
           }
         }, []);

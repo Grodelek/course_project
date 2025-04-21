@@ -1,17 +1,51 @@
 "use client"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import NavLink from "./navlink";
 import { FaHome, FaChalkboard, FaSignOutAlt, FaCog, FaRoute, FaUserAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
-export default function Navigation({userName}) {
+export default function Navigation() {
   const userProfileImage = "";
   const router = useRouter();
+  const [name, setName] = useState("Gość");
+
   const handleSubmit = () =>{
     localStorage.clear();
     router.replace('/');
     window.location.reload();
-  }
+  };
+
+  useEffect(() => {
+    const stored = localStorage.getItem("userName");
+    if (stored) {
+      setName(stored);
+      return;
+    }
+    const token = localStorage.getItem("token");
+    const email = localStorage.getItem("email");
+
+    fetch(`http://localhost:8080/user/username?email=${email}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        if(!res.ok) {
+          return res.text().then((text) => {
+            console.error("cos",text || "pusty");
+          })
+        }
+        return res.text();
+      })
+      .then((username) => {
+        setName(username);
+        localStorage.setItem("userName",username);
+      })
+  
+  }, []);
+  
+  
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white/10 backdrop-blur-md text-white py-3 px-8 
@@ -27,7 +61,7 @@ export default function Navigation({userName}) {
         ) : (
           <FaUserAlt className="w-10 h-10 text-white" />
         )}
-        <span>{userName}</span>
+        <span>{name}</span>
       </div>
 
       <div className="flex space-x-6 text-sm font-medium">
