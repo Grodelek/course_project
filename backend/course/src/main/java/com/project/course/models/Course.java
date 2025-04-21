@@ -1,5 +1,7 @@
 package com.project.course.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +27,7 @@ public class Course {
   private int rating;
   @ManyToOne
   @JoinColumn(name = "roadmap_id")
+  @JsonIgnore
   private Roadmap roadmap;
 
   public Roadmap getRoadmap() {
