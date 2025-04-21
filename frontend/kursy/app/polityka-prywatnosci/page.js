@@ -1,5 +1,6 @@
-import PokazNav from "../components/auth/PokazNav.js";
+
 import Link from "next/link";
+import Brama from "../components/auth/Brama";
 export const metadata = {
   title: "Polityka prywatności – Kursy Internetowe",
   description: "Jak przetwarzamy i chronimy Twoje dane osobowe",
@@ -7,12 +8,11 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <section
+    <Brama>
+<section
       className="relative w-full min-h-screen bg-cover bg-center pt-28 pb-10"
       style={{ backgroundImage: 'url("/tloStart.png")' }}
     >
-      <PokazNav />
-
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4 max-w-3xl">
@@ -107,5 +107,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </div>
     </section>
+      </Brama>
+    
   );
 }

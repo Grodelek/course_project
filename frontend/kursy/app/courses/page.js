@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Navigation from "../components/navigation/navigation.js";
+import Brama from "../components/auth/Brama";
+
 
 export default function Courses() {
   //const [coursesData, setCoursesData] = useState([]);
@@ -32,9 +33,6 @@ export default function Courses() {
     fetchData();
           }, []);
 
-  const userName = 'Filip';
-
-
   // paginacja
   const itemsPerPage = 3;
   const totalPages = Math.ceil(coursesData.length / itemsPerPage);
@@ -53,11 +51,12 @@ export default function Courses() {
   };
 
   return (
-    <section
+    <Brama>
+<section
       className="relative w-full min-h-screen bg-cover bg-center pt-28 pb-10"
       style={{ backgroundImage: 'url("/tloStart.png")' }}
     >
-      <Navigation userName={userName} />
+      
 
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80 pointer-events-none" />
 
@@ -148,5 +147,7 @@ export default function Courses() {
         </div>
       </div>
     </section>
+    </Brama>
+    
   );
 }

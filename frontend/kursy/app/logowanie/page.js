@@ -80,9 +80,8 @@ export default function Logowanie() {
                 throw new Error("Brak tokena w odpowiedzi serwera");
             }
 
-
         } catch (err) {
-            setError(err.message);
+          setErrorTop(err.message);
         }
   };
 

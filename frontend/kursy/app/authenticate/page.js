@@ -31,15 +31,7 @@ export default function Authenticate() {
                   const errorText = await response.text();
                   throw new Error(`Błąd ${response.status}: ${errorText}`);
               }
-              const token = await response.text();
-              
-                          if (token) {
-                              localStorage.setItem("token", token);
-                              localStorage.setItem("username", email);
-                              router.push('/');
-                          } else {
-                              throw new Error("Brak tokena w odpowiedzi serwera");
-                          }
+
               router.push('/logowanie');
   
           } catch (err) {

@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import Navigation from "../components/navigation/navigation.js";
+import Brama from "../components/auth/Brama";
+
 
 export default function Roadmaps() {
-  const userName = 'Filip';
   const roadmapsData = [
     {
       id: 1,
@@ -34,11 +34,12 @@ export default function Roadmaps() {
   };
 
   return (
-    <section
+    <Brama>
+<section
       className="relative w-full min-h-screen bg-cover bg-center pt-28 pb-10"
       style={{ backgroundImage: 'url("/tloStart.png")' }}
     >
-      <Navigation userName={userName} />
+      
 
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80 pointer-events-none" />
 
@@ -133,5 +134,7 @@ export default function Roadmaps() {
         </div>
       </div>
     </section>
+      </Brama>
+    
   );
 }
