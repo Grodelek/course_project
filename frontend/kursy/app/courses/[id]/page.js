@@ -1,10 +1,9 @@
+import Brama from "@/app/components/auth/Brama";
 import Link from "next/link";
-import Navigation from "../../components/navigation/navigation.js";
 import { FaCheckCircle, FaRegCheckCircle } from "react-icons/fa";
 
 export default async function CourseDetails({ params }) {
   const { courseId } = params;
-  const userName = "Filip";
 
   const courseData = {
     id: Number(courseId),
@@ -27,11 +26,12 @@ export default async function CourseDetails({ params }) {
     (completedLessons / courseData.lessons.length) * 100;
 
   return (
-    <section
+    <Brama>
+<section
       className="relative w-full min-h-screen bg-cover bg-center pt-28 pb-10"
       style={{ backgroundImage: 'url("/tloStart.png")' }}
     >
-      <Navigation userName={userName} />
+      
 
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80 pointer-events-none" />
 
@@ -98,5 +98,7 @@ export default async function CourseDetails({ params }) {
 </div>
       </div>
     </section>
+    </Brama>
+    
   );
 }

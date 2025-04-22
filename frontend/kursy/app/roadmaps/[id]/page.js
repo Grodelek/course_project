@@ -1,10 +1,9 @@
+import Brama from "@/app/components/auth/Brama";
 import Link from "next/link";
 import { FaCheck } from "react-icons/fa";
-import Navigation from "../../components/navigation/navigation.js";
 
 export default function RoadmapDetails({ params }) {
   const { id } = params;
-  const userName = "Filip";
 
   const roadmapData = {
     id: Number(id),
@@ -34,11 +33,11 @@ export default function RoadmapDetails({ params }) {
     (completedSteps / roadmapData.stepsCount) * 100;
 
   return (
-    <section
+    <Brama>
+<section
       className="relative w-full min-h-screen bg-cover bg-center pt-28 pb-10"
       style={{ backgroundImage: 'url("/tloStart.png")' }}
     >
-      <Navigation userName={userName} />
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4">
@@ -112,5 +111,7 @@ export default function RoadmapDetails({ params }) {
         </div>
       </div>
     </section>
+    </Brama>
+    
   );
 }

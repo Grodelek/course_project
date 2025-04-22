@@ -81,7 +81,7 @@ export default function Logowanie() {
             }
 
         } catch (err) {
-            setError(err.message);
+          setErrorTop(err.message);
         }
   };
 

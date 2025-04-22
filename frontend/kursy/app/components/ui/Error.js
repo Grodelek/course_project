@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 
+
 export default function ErrorRej({ msg, gif = "/oops1.gif", onClose }) {
   useEffect(() => {
     const fn = (e) => e.key === "Escape" && onClose();
