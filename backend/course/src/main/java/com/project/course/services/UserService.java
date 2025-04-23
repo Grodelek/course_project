@@ -1,15 +1,13 @@
 package com.project.course.services;
 
 import com.project.course.exceptions.UserAlreadyExistsException;
-import com.project.course.models.Ban;
-import com.project.course.models.User;
-import com.project.course.models.UserDTO;
-import com.project.course.models.UserVerification;
-import com.project.course.models.VerificationCodeDTO;
+import com.project.course.models.*;
 import com.project.course.repositories.BanRepository;
+import com.project.course.repositories.CourseRepository;
 import com.project.course.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +50,9 @@ public class UserService {
     this.emailSenderService = emailSenderService;
     this.banRepository = banRepository;
   }
+  @Autowired
+  private CourseRepository courseRepository;
+
 
   public Optional<User> findByEmail(String email) {
     return userRepository.findByEmail(email);
@@ -176,5 +177,29 @@ public class UserService {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found");
     }
+  }
+
+  @Transactional
+  public ResponseEntity<?> addFinishedCourseByEmail(String email, Long courseId) {
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    Optional<Course> courseOptional = courseRepository.findById(courseId);
+
+    if (userOptional.isPresent() && courseOptional.isPresent()) {
+      User user = userOptional.get();
+      Course course = courseOptional.get();
+
+      if (!user.getFinishedCoursesList().contains(course)) {
+        user.getFinishedCoursesList().add(course);
+        userRepository.save(user);
+      }
+
+      return ResponseEntity.ok("Course added to finished list.");
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found.");
+    }
+  }
+
+  public List<Long> getFinishedCourseIdsByEmail(String email) {
+    return userRepository.findFinishedCourseIdsByUserEmail(email);
   }
 }

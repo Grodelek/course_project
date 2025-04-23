@@ -2,6 +2,8 @@ package com.project.course.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -18,6 +20,14 @@ public class User {
   private String username;
   @Column(name = "isConfirmed")
   private char isConfirmed;
+  @ManyToMany
+  @JoinTable(
+          name = "user_finished_courses",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "course_id")
+  )
+  private List<Course> finishedCoursesList;
+
 
   public char getIsConfirmed() {
     return isConfirmed;
@@ -61,4 +71,12 @@ public class User {
 
   public String getUsername() { return username; }
   public void setUsername(String username) { this.username = username; }
+
+  public List<Course> getFinishedCoursesList() {
+    return finishedCoursesList;
+  }
+
+  public void setFinishedCoursesList(List<Course> finishedCoursesList) {
+    this.finishedCoursesList = finishedCoursesList;
+  }
 }
