@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,9 @@ public class Course {
   @ManyToMany(mappedBy = "finishedCoursesList")
   @JsonIgnore
   private List<User> users;
+  @OneToMany(mappedBy = "course")
+  @JsonIgnore
+  private List<Lesson> lessons = new ArrayList<>();
 
   public Roadmap getRoadmap() {
     return roadmap;
@@ -82,5 +86,13 @@ public class Course {
 
   public void setUsers(List<User> users) {
     this.users = users;
+  }
+
+  public List<Lesson> getLessons() {
+    return lessons;
+  }
+
+  public void setLesson(List<Lesson> lessons) {
+    this.lessons = lessons;
   }
 }
