@@ -2,6 +2,7 @@ package com.project.course.models;
 
 public class LessonDTO {
   private String name;
+  private String description;
 
   public String getName() {
     return name;
@@ -9,5 +10,13 @@ public class LessonDTO {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

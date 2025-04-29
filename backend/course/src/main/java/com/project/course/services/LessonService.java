@@ -1,17 +1,12 @@
 package com.project.course.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import com.project.course.models.Course;
 import com.project.course.models.Lesson;
 import com.project.course.models.LessonDTO;
@@ -36,6 +31,7 @@ public class LessonService {
     }
     Lesson lesson = new Lesson();
     lesson.setName(lessonDTO.getName());
+    lesson.setDescription(lessonDTO.getDescription());
     lesson.setIsFinished(false);
     Optional<Course> courseOpt = courseRepository.findById(id);
     if (!courseOpt.isPresent()) {
