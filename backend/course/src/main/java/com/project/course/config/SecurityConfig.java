@@ -2,7 +2,6 @@ package com.project.course.config;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import com.project.course.security.CustomOAuth2SuccessHandler;
+import com.project.course.services.UserService;
+
 import java.util.List;
 
 @Configuration
@@ -35,13 +37,22 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource)
+  public CustomOAuth2SuccessHandler customOAuth2SuccessHandler(UserService userService,
+      PasswordEncoder passwordEncoder) {
+    return new CustomOAuth2SuccessHandler(userService, passwordEncoder);
+  }
+
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource,
+      CustomOAuth2SuccessHandler customOAuth2SuccessHandler)
       throws Exception {
     return http
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
+        .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2SuccessHandler))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/register", "/login", "/authenticate", "/swagger-ui/**", "/v3/api-docs/**",
+            .requestMatchers("/", "/oauth2/reset-password", "/register", "/login", "/authenticate", "/swagger-ui/**",
+                "/v3/api-docs/**",
                 "/swagger-ui.html", "/ban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids")
             .permitAll()
             .anyRequest().authenticated())
