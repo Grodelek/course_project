@@ -62,4 +62,9 @@ public class CourseController {
   public ResponseEntity<?> addLessonToCourse(@RequestBody LessonDTO lessonDTO, @PathVariable Long id) {
     return lessonService.addLessonToCourse(lessonDTO, id);
   }
+
+  @DeleteMapping("/{courseId}/lessons/{lessonId}")
+  public ResponseEntity<?> deleteLesson(@PathVariable Long courseId, @PathVariable Long lessonId) {
+    return lessonService.deleteLesson(courseId, lessonId);
+  }
 }
