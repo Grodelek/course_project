@@ -51,7 +51,8 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .oauth2Login(oauth2 -> oauth2.successHandler(customOAuth2SuccessHandler))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/oauth2/reset-password", "/register", "/login", "/authenticate", "/swagger-ui/**",
+            .requestMatchers("/", "/oauth2/reset-password", "/api/s3/upload", "/register", "/login", "/authenticate",
+                "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-ui.html", "/ban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids")
             .permitAll()
