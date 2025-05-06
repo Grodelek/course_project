@@ -54,6 +54,9 @@ public class UserService {
   private CourseRepository courseRepository;
 
 
+  @Autowired
+  private CourseRepository courseRepository;
+
   public Optional<User> findByEmail(String email) {
     return userRepository.findByEmail(email);
   }
@@ -61,8 +64,6 @@ public class UserService {
   public void save(User user) {
     userRepository.save(user);
   }
-
-
 
   public static String generateCode() {
     Random random = new Random();

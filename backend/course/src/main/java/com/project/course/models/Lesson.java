@@ -17,6 +17,8 @@ public class Lesson {
   private Long id;
   @Column(name = "name", nullable = false)
   private String name;
+  @Column(name = "description")
+  private String description;
   @Column(name = "is_finished", nullable = false)
   private boolean isFinished;
   @ManyToOne
@@ -37,6 +39,14 @@ public class Lesson {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getDescription() {
+    return this.description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public boolean getIsFinished() {

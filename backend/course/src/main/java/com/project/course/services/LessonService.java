@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import java.net.http.HttpRequest;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import com.project.course.models.Course;
 import com.project.course.models.Lesson;
 import com.project.course.models.LessonDTO;
@@ -36,6 +41,7 @@ public class LessonService {
     }
     Lesson lesson = new Lesson();
     lesson.setName(lessonDTO.getName());
+    lesson.setDescription(lessonDTO.getDescription());
     lesson.setIsFinished(false);
     Optional<Course> courseOpt = courseRepository.findById(id);
     if (!courseOpt.isPresent()) {
@@ -47,6 +53,15 @@ public class LessonService {
     lessonRepository.save(lesson);
     courseRepository.save(course);
     return ResponseEntity.status(HttpStatus.OK).body("Lesson added to course " + id);
+  }
 
+  public ResponseEntity<?> deleteLesson(@PathVariable Long courseId, @PathVariable Long lessonId) {
+    List<Lesson> lessonList = lessonRepository.findByCourseId(courseId);
+    for (Lesson element : lessonList) {
+      if (element.getId() == lessonId) {
+        lessonRepository.delete(element);
+      }
+    }
+    return ResponseEntity.ok().body("Lesson deleted");
   }
 }
