@@ -15,6 +15,8 @@ import com.project.course.models.UserDTO;
 import com.project.course.models.VerificationCodeDTO;
 import com.project.course.services.UserService;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
@@ -55,6 +57,18 @@ public class UserController {
     return userService.findByEmail(email)
             .map(user -> ResponseEntity.ok(user.getUsername()))
             .orElse(ResponseEntity.notFound().build());
+  }
+  @PostMapping("/{email}/finished-courses/{courseId}")
+  public ResponseEntity<?> addFinishedCourseByEmail(
+          @PathVariable String email,
+          @PathVariable Long courseId) {
+    return userService.addFinishedCourseByEmail(email, courseId);
+  }
+
+  @GetMapping("/{email}/finished-course-ids")
+  public ResponseEntity<List<Long>> getFinishedCourseIds(@PathVariable String email) {
+    List<Long> courseIds = userService.getFinishedCourseIdsByEmail(email);
+    return ResponseEntity.ok(courseIds);
   }
 
 }

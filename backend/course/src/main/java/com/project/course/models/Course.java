@@ -1,13 +1,11 @@
 package com.project.course.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "course")
@@ -25,7 +23,14 @@ public class Course {
   private int rating;
   @ManyToOne
   @JoinColumn(name = "roadmap_id")
+  @JsonIgnore
   private Roadmap roadmap;
+  @ManyToMany(mappedBy = "finishedCoursesList")
+  @JsonIgnore
+  private List<User> users;
+  @OneToMany(mappedBy = "course")
+  @JsonIgnore
+  private List<Lesson> lessons = new ArrayList<>();
 
   public Roadmap getRoadmap() {
     return roadmap;
@@ -73,5 +78,21 @@ public class Course {
 
   public void setRating(int rating) {
     this.rating = rating;
+  }
+
+  public List<User> getUsers() {
+    return users;
+  }
+
+  public void setUsers(List<User> users) {
+    this.users = users;
+  }
+
+  public List<Lesson> getLessons() {
+    return lessons;
+  }
+
+  public void setLesson(List<Lesson> lessons) {
+    this.lessons = lessons;
   }
 }

@@ -1,8 +1,11 @@
 package com.project.course.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.project.course.models.User;
@@ -14,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   public boolean existsByEmail(String email);
   public boolean existsByUsername(String username);
+
+  @Query("SELECT c.id FROM User u JOIN u.finishedCoursesList c WHERE u.email = :email")
+  List<Long> findFinishedCourseIdsByUserEmail(@Param("email") String email);
 }

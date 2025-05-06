@@ -1,37 +1,72 @@
+"use client"
+
 import Brama from "@/app/components/auth/Brama";
 import Link from "next/link";
+import { use, useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 
 export default function RoadmapDetails({ params }) {
-  const { id } = params;
+  const [roadmapsData, setRoadmapsData] = useState([]);
+  const [finishedCourses, setFinishedCourses] = useState([]);
+      const [error, setError] = useState("");
+      useEffect(() => {
+        const email = localStorage.getItem("email");
+        async function fetchData(){
+          setError("");
+          try {
+    
+              const response = await fetch("http://localhost:8080/roadmap/all", {
+                  method: "GET",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+              });
+    
+              if (!response.ok) {
+                  throw new Error(`Błąd `);
+              }
+              const data = await response.json();
+              setRoadmapsData(data);
+              
+              const response2 = await fetch(`http://localhost:8080/${email}/finished-course-ids`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+  
+            if (!response2.ok) {
+                throw new Error(`Błąd `);
+            }
+            const data2 = await response2.json();
+            setFinishedCourses(data2);
+    
+          } catch (err) {
+              setError(err.message);
+          }
+          
+        }
+        fetchData();
+              }, []);
+        
+  const resolvedParams = use(params);
+  const { id } = resolvedParams || {};
 
-  const roadmapData = {
-    id: Number(id),
-    title: "Web Mejster",
-    description:
-      "Nauczysz się HTML, CSS, JavaScript oraz nowoczesnych frameworków, aby zbudować solidne projekty webowe. Ta roadmapa pomoże Ci przejść od podstawowych zagadnień do zaawansowanych technik tworzenia stron.",
-    length: "10h",
-    stepsCount: 8,
-    rating: 4,
-    steps: [
-      { id: 1, title: "Wprowadzenie do HTML", completed: 1 },
-      { id: 2, title: "Podstawy CSS", completed: 1 },
-      { id: 3, title: "JavaScript od podstaw", completed: 0 },
-      { id: 4, title: "Responsywność strony", completed: 1 },
-      { id: 5, title: "Framework CSS", completed: 0 },
-      { id: 6, title: "Projektowanie interfejsów", completed: 0 },
-      { id: 7, title: "Zarządzanie stanem", completed: 0 },
-      { id: 8, title: "Optymalizacja i wdrożenie", completed: 0 },
-    ],
-    stepsID: [1, 2, 3, 4, 5, 6, 7, 8],
-  };
+  if (!roadmapsData.length) {
+    return <div className="text-white p-10">Ładowanie danych...</div>;
+  }
 
-  const completedSteps = roadmapData.steps.filter(
-    (step) => step.completed === 1
+  const roadmapData = roadmapsData.find((element) => element.id == id);
+  
+  const finishedSet = new Set(finishedCourses.map(String));
+  const completedSteps = roadmapData.courseList.filter((course) =>
+    finishedSet.has(String(course.id))
   ).length;
-  const progressPercentage =
-    (completedSteps / roadmapData.stepsCount) * 100;
 
+
+  const progressPercentage =
+    (completedSteps / roadmapData.courseList.length) * 100;
+  
   return (
     <Brama>
 <section
@@ -61,10 +96,10 @@ export default function RoadmapDetails({ params }) {
           <p className="mb-4">{roadmapData.description}</p>
           <div className="flex justify-between mb-4">
             <span>
-              <strong>Długość:</strong> {roadmapData.length}
+              <strong>Długość:</strong> {roadmapData.courseList.reduce((sum, course) => sum + Number(course.length), 0)}
             </span>
             <span>
-              <strong>Ilość kursów:</strong> {roadmapData.stepsCount}
+              <strong>Ilość kursów:</strong> {roadmapData.courseList.length}
             </span>
           </div>
           <div className="mb-4">
@@ -75,7 +110,7 @@ export default function RoadmapDetails({ params }) {
               />
             </div>
             <p className="text-sm mt-2">
-              {completedSteps} z {roadmapData.stepsCount} ukończonych (
+              {completedSteps} z {roadmapData.courseList.length} ukończonych (
               {Math.round(progressPercentage)}%)
             </p>
           </div>
@@ -85,9 +120,9 @@ export default function RoadmapDetails({ params }) {
           <h2 className="text-2xl font-semibold mb-4">Kroki w Roadmapie:</h2>
           <div className="relative flex items-center justify-between w-full">
             <div className="absolute left-0 right-0 h-1 bg-gray-500/50 z-0 top-1/2 -translate-y-1/2" />
-            {roadmapData.steps.map((step, index) => {
-              const isCompleted = step.completed === 1;
-              const courseId = roadmapData.stepsID[index];
+            {roadmapData.courseList.map((step, index) => {
+              const isCompleted = finishedSet.has(String(step.id));
+              const courseId = roadmapData.courseList[index].id;
               return (
                 <Link key={index} href={`/courses/${courseId}`}>
                   <div className="relative z-10 flex flex-col items-center text-center flex-1">
@@ -101,7 +136,7 @@ export default function RoadmapDetails({ params }) {
                       {isCompleted ? "1" : "0"}
                     </div>
                     <span className="text-sm whitespace-nowrap">
-                      {step.title}
+                      {step.name}
                     </span>
                   </div>
                 </Link>

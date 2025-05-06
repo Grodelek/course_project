@@ -81,9 +81,12 @@ export default async function CourseDetails({ params }) {
           <p className="text-sm text-gray-200">{lesson.duration}</p>
         </div>
 
-        <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded transition">
-          Przejdź
-        </button>
+        <Link
+                    href={`/courses/${courseData.id}/${lesson.id}`}
+                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded transition"
+                  >
+                    Przejdź
+                  </Link>
 
         <div className="justify-self-end">
           {lesson.completed ? (

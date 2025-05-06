@@ -1,20 +1,36 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Brama from "../components/auth/Brama";
 
 
 export default function Roadmaps() {
-  const roadmapsData = [
-    {
-      id: 1,
-      title: "Web Mejster",
-      description: "Opanuj HTML, CSS, JavaScript oraz nowoczesne frameworki.",
-      length: "10h",
-      stepsCount: 8,
-      rating: 4,
-    },
-  ];
+    const [roadmapsData, setRoadmapsData] = useState([]);
+    const [error, setError] = useState("");
+    useEffect(() => {
+      async function fetchData(){
+        setError("");
+        try {
+  
+            const response = await fetch("http://localhost:8080/roadmap/all", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+  
+            if (!response.ok) {
+                throw new Error(`Błąd `);
+            }
+            const data = await response.json();
+            setRoadmapsData(data);
+  
+        } catch (err) {
+            setError(err.message);
+        }
+      }
+      fetchData();
+            }, []);
 
   // paginacja
   const itemsPerPage = 3;
@@ -69,19 +85,25 @@ export default function Roadmaps() {
             </thead>
             <tbody>
               {currentData.map((roadmap) => (
+                
                 <tr key={roadmap.id} className="border-b border-white/20">
-                  <td className="px-6 py-4 whitespace-nowrap">{roadmap.title}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{roadmap.length}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{roadmap.stepsCount}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{roadmap.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{roadmap.courseList.reduce((sum, course) => sum + Number(course.length), 0)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{roadmap.courseList.length}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className={i < roadmap.rating ? "text-yellow-400" : "text-gray-400"}
-                      >
-                        &#9733;
-                      </span>
-                    ))}
+                    {(() => {
+                      const totalRating = roadmap.courseList.reduce((sum, course) => sum + (course.rating || 0), 0);
+                      const avgRating = roadmap.courseList.length > 0 ? totalRating / roadmap.courseList.length : 0;
+                      const roundedRating = Math.round(avgRating);
+                      return Array.from({ length: 5 }).map((_, i) => (
+                        <span
+                          key={i}
+                          className={i < roundedRating ? "text-yellow-400" : "text-gray-400"}
+                        >
+                          &#9733;
+                        </span>
+                      ));
+                    })()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link href={`/roadmaps/${roadmap.id}`}>

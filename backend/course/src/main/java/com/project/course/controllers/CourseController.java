@@ -12,16 +12,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.course.models.CourseDTO;
+import com.project.course.models.LessonDTO;
 import com.project.course.services.CourseService;
+import com.project.course.services.LessonService;
 
 @RestController
 @RequestMapping("/course")
 public class CourseController {
   private CourseService courseService;
+  private LessonService lessonService;
 
   @Autowired
-  public CourseController(CourseService courseService) {
+  public CourseController(CourseService courseService, LessonService lessonService) {
     this.courseService = courseService;
+    this.lessonService = lessonService;
   }
 
   @GetMapping("/{id}")
@@ -47,5 +51,15 @@ public class CourseController {
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
     return courseService.deleteCourse(id);
+  }
+
+  @GetMapping("/{id}/lessons")
+  public List<?> getLessonsFromCourse(@PathVariable Long id) {
+    return courseService.findLessonsById(id);
+  }
+
+  @PostMapping("/{id}/lessons")
+  public ResponseEntity<?> addLessonToCourse(@RequestBody LessonDTO lessonDTO, @PathVariable Long id) {
+    return lessonService.addLessonToCourse(lessonDTO, id);
   }
 }

@@ -17,7 +17,7 @@ export default function Brama({ children }) {
   useLayoutEffect(() => {
     const token  = localStorage.getItem("token");
     const banEnd = localStorage.getItem("banEnd");
-
+    
     if (banEnd)      setStatus("banned");
     else if (!token) setStatus("notLoggedIn");
     else             setStatus("loggedIn");

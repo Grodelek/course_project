@@ -11,15 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.project.course.models.Course;
 import com.project.course.models.CourseDTO;
+import com.project.course.models.Lesson;
 import com.project.course.repositories.CourseRepository;
+import com.project.course.repositories.LessonRepository;
+
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Service
 public class CourseService {
   private final CourseRepository courseRepository;
+  private final LessonRepository lessonRepository;
 
-  public CourseService(CourseRepository courseRepository) {
+  public CourseService(CourseRepository courseRepository, LessonRepository lessonRepository) {
     this.courseRepository = courseRepository;
+    this.lessonRepository = lessonRepository;
   }
 
   public List<Course> getCourses() {
@@ -81,5 +86,9 @@ public class CourseService {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found");
     }
+  }
+
+  public List<Lesson> findLessonsById(Long id) {
+    return lessonRepository.findByCourseId(id);
   }
 }
