@@ -50,9 +50,6 @@ public class UserService {
     this.emailSenderService = emailSenderService;
     this.banRepository = banRepository;
   }
-  @Autowired
-  private CourseRepository courseRepository;
-
 
   @Autowired
   private CourseRepository courseRepository;
