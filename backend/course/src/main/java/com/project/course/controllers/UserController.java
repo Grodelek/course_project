@@ -1,57 +1,79 @@
 package com.project.course.controllers;
 
-import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.project.course.models.User;
-import com.project.course.models.UserVerificationDTO;
-import com.project.course.services.EmailSenderService;
+import org.springframework.web.bind.annotation.*;
+import com.project.course.models.UserDTO;
+import com.project.course.models.VerificationCodeDTO;
 import com.project.course.services.UserService;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
   private final UserService userService;
-  private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
-  private final EmailSenderService emailSenderService;
 
   @Autowired
-  public UserController(UserService userService,
-      EmailSenderService emailSenderService) {
+  public UserController(UserService userService) {
     this.userService = userService;
-    this.emailSenderService = emailSenderService;
   }
 
   @PostMapping("/login")
-  public String login(@RequestBody User user) {
-    return userService.verify(user);
-  }
-
-  public static String generateCode() {
-    Random random = new Random();
-    StringBuilder code = new StringBuilder();
-    for (int i = 0; i < 6; i++) {
-      code.append(random.nextInt(10));
-    }
-    return code.toString();
+  public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
+    return userService.verify(userDTO);
   }
 
   @PostMapping("/register")
-  public User register(@RequestBody User user) {
-    user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-    user.setRoles("USER");
-    user.setIsConfirmed('0');
-    String verificationCode = generateCode();
-    UserVerificationDTO userVerificationDTO = new UserVerificationDTO(verificationCode);
-    emailSenderService.sendEmail(user.getEmail(),
-        "Spring User Account verification",
-        verificationCode);
-    return userService.register(user);
+  public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+    return userService.register(userDTO);
+  }
+
+  @PutMapping("/user/update/{id}")
+  public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO, @PathVariable Long id) {
+    return userService.updateUser(userDTO, id);
+  }
+
+  @DeleteMapping("/user/delete/{id}")
+  public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    return userService.deleteUser(id);
+  }
+
+  @PostMapping("/authenticate")
+  public ResponseEntity<?> authenticate(@RequestBody VerificationCodeDTO verificationCode, @RequestParam String email) {
+    return userService.authenticate(verificationCode, email);
+  }
+
+  @GetMapping("/user/username")
+  public ResponseEntity<?> getUserName(@RequestParam String email) {
+    return userService.findByEmail(email)
+            .map(user -> ResponseEntity.ok(user.getUsername()))
+            .orElse(ResponseEntity.notFound().build());
+  }
+  @PostMapping("/{email}/finished-courses/{courseId}")
+  public ResponseEntity<?> addFinishedCourseByEmail(
+          @PathVariable String email,
+          @PathVariable Long courseId) {
+    return userService.addFinishedCourseByEmail(email, courseId);
+  }
+
+  @GetMapping("/{email}/finished-course-ids")
+  public ResponseEntity<List<Long>> getFinishedCourseIds(@PathVariable String email) {
+    List<Long> courseIds = userService.getFinishedCourseIdsByEmail(email);
+    return ResponseEntity.ok(courseIds);
+  }
+
+  @GetMapping("/{email}/finished-lessons-ids")
+  public ResponseEntity<List<Long>> getFinishedLessonsIds(@PathVariable String email) {
+    List<Long> lessonsIds = userService.getFinishedLessonsIdsByEmail(email);
+    return ResponseEntity.ok(lessonsIds);
   }
 }

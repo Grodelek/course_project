@@ -1,10 +1,39 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import Navigation from "../navigation/navigation";
+import { useEffect, useState } from "react";
 
 export default function LoggedIn(){
-    const userName = 'Filip';
+    const [userName, setName] = useState("");
+    useEffect(() => {
+      const stored = localStorage.getItem("userName");
+      if (stored) {
+        setName(stored);
+        return;
+      }
+      const token = localStorage.getItem("token");
+      const email = localStorage.getItem("email");
+  
+      fetch(`http://localhost:8080/user/username?email=${email}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          if(!res.ok) {
+            return res.text().then((text) => {
+              console.error("cos",text || "pusty");
+            })
+          }
+          return res.text();
+        })
+        .then((username) => {
+          setName(username);
+          localStorage.setItem("userName",username);
+        })
+    
+    }, []);
+    
     const videos = [
         "https://www.youtube.com/embed/0M1C9yEzplI?autoplay=1&mute=1",
         "https://www.youtube.com/embed/20pvrDle36o?autoplay=1&mute=1",
@@ -26,7 +55,6 @@ export default function LoggedIn(){
           className="relative w-full h-screen bg-cover bg-center flex flex-col justify-center items-center pt-20"
           style={{ backgroundImage: 'url("/tloStart.png")' }}
         >
-          <Navigation userName={userName}/>
           <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80" />
 
           <div className="relative z-10 text-center text-white px-6 max-w-2xl">

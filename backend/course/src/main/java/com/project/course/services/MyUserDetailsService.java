@@ -1,11 +1,7 @@
 package com.project.course.services;
 
-import com.project.course.models.User;
 import com.project.course.models.UserPrincipal;
 import com.project.course.repositories.UserRepository;
-
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
