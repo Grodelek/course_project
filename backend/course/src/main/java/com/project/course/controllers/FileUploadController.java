@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.project.course.dto.FileUploadDTO;
@@ -17,7 +18,7 @@ public class FileUploadController {
   private FileService fileService;
 
   @PostMapping("/upload")
-  public ResponseEntity<FileUploadDTO> uploadFile(MultipartFile file) {
+  public ResponseEntity<FileUploadDTO> uploadFile(@RequestParam("file") MultipartFile file) {
     return new ResponseEntity<>(fileService.uploadFile(file), HttpStatus.OK);
   }
 }

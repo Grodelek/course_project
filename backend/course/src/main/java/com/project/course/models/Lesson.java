@@ -1,13 +1,9 @@
 package com.project.course.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Table(name = "lesson")
 @Entity
@@ -24,6 +20,9 @@ public class Lesson {
   @ManyToOne
   @JoinColumn(name = "course_id")
   private Course course;
+  @ManyToMany(mappedBy = "finishedLessonsList")
+  @JsonIgnore
+  private List<User> users;
 
   public Long getId() {
     return id;

@@ -27,7 +27,13 @@ public class User {
           inverseJoinColumns = @JoinColumn(name = "course_id")
   )
   private List<Course> finishedCoursesList;
-
+  @ManyToMany
+  @JoinTable(
+          name = "user_finished_lessons",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "lesson_id")
+  )
+  private List<Lesson> finishedLessonsList;
 
   public char getIsConfirmed() {
     return isConfirmed;

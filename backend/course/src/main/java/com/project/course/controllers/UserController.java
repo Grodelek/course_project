@@ -71,4 +71,9 @@ public class UserController {
     return ResponseEntity.ok(courseIds);
   }
 
+  @GetMapping("/{email}/finished-lessons-ids")
+  public ResponseEntity<List<Long>> getFinishedLessonsIds(@PathVariable String email) {
+    List<Long> lessonsIds = userService.getFinishedLessonsIdsByEmail(email);
+    return ResponseEntity.ok(lessonsIds);
+  }
 }

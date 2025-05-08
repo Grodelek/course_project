@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query("SELECT c.id FROM User u JOIN u.finishedCoursesList c WHERE u.email = :email")
   List<Long> findFinishedCourseIdsByUserEmail(@Param("email") String email);
+
+  @Query("SELECT l.id FROM User u JOIN u.finishedLessonsList l WHERE u.email = :email")
+  List<Long> findFinishedLessonsIdsByUserEmail(@Param("email") String email);
 }

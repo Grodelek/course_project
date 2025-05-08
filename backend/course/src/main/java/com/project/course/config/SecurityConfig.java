@@ -54,7 +54,8 @@ public class SecurityConfig {
             .requestMatchers("/", "/oauth2/reset-password", "/api/s3/upload", "/register", "/login", "/authenticate",
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
-                "/swagger-ui.html", "/ban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids")
+                "/swagger-ui.html", "/ban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids",
+                "/course/*/lessons", "/*/finished-lessons-ids","/course/*")
             .permitAll()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

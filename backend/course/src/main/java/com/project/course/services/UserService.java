@@ -200,4 +200,8 @@ public class UserService {
   public List<Long> getFinishedCourseIdsByEmail(String email) {
     return userRepository.findFinishedCourseIdsByUserEmail(email);
   }
+
+  public List<Long> getFinishedLessonsIdsByEmail(String email) {
+    return userRepository.findFinishedLessonsIdsByUserEmail(email);
+  }
 }
