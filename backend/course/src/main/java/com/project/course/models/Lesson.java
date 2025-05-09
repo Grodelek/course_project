@@ -3,6 +3,7 @@ package com.project.course.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "lesson")
@@ -23,7 +24,9 @@ public class Lesson {
   @ManyToMany(mappedBy = "finishedLessonsList")
   @JsonIgnore
   private List<User> users;
-
+  @OneToMany(mappedBy = "lesson")
+  @JsonIgnore
+  private List<Sector> sectors = new ArrayList<>();
   public Long getId() {
     return id;
   }

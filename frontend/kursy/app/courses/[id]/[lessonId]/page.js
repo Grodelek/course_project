@@ -65,13 +65,55 @@ function pobierzKurs(idKursu) {
   }
 
 export default function StronaLekcji({ params }) {
-  const { id: idKursu, lessonId: idLekcji } = use(params);
+  const { id: courseId, lessonId: lessonId } = use(params);
+  const [ukonczona, setUkonczona] = useState(false);
+  const [flash, setFlash] = useState(false);
+  const [sectors, setSectors] = useState([]);
+  const [lessons, setLessons] = useState([]);
+  const [error, setError] = useState("");
+  const kluczStorage = `kurs:${courseId}:lekcja:${lessonId}:ukonczona`;
+  useEffect(() => {
+    setUkonczona(localStorage.getItem(kluczStorage) === "1");
+  }, [kluczStorage]);
+  useEffect(() => {
+    async function fetchData(){
+      setError("");
+      try {
 
-  const kurs = pobierzKurs(idKursu);
-  const indeksLekcji = kurs.lekcje.findIndex((l) => l.id === Number(idLekcji));
-  const lekcja = kurs.lekcje[indeksLekcji];
+          const response = await fetch(`http://localhost:8080/sector/${lessonId}`, {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          });
 
-  if (!lekcja) {
+          if (!response.ok) {
+              throw new Error(`Błąd `);
+          }
+          const data = await response.json();
+          setSectors(data);
+
+          const response2 = await fetch(`http://localhost:8080/course/${courseId}/lessons`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response2.ok) {
+            throw new Error(`Błąd `);
+        }
+        const data2 = await response2.json();
+        setLessons(data2);
+
+      } catch (err) {
+          setError(err.message);
+      }
+    }
+    fetchData();
+          }, []);
+
+  if (sectors.length === 0) {
     return (
       <Brama>
         <div className="flex items-center justify-center min-h-screen text-white">
@@ -81,16 +123,23 @@ export default function StronaLekcji({ params }) {
     );
   }
 
-  const poprzedniaLekcja = kurs.lekcje[indeksLekcji - 1];
-  const nastepnaLekcja = kurs.lekcje[indeksLekcji + 1];
+  if (lessons.length === 0) {
+    return (
+      <Brama>
+        <div className="flex items-center justify-center min-h-screen text-white">
+          <h1 className="text-3xl">Lekcja nie została znaleziona.</h1>
+        </div>
+      </Brama>
+    );
+  }
 
-  const kluczStorage = `kurs:${kurs.id}:lekcja:${lekcja.id}:ukonczona`;
-  const [ukonczona, setUkonczona] = useState(false);
-  const [flash, setFlash] = useState(false);
+  sectors.sort((a,b) => a.place - b.place);
+  const thisLesson = lessons.findIndex(lesson => lesson.id === Number(lessonId));
+  const poprzedniaLekcja = lessons[thisLesson-1];
+  const nastepnaLekcja = lessons[thisLesson + 1];
+  
 
-  useEffect(() => {
-    setUkonczona(localStorage.getItem(kluczStorage) === "1");
-  }, [kluczStorage]);
+  
 
   const toggleUkonczona = () => {
     const nowa = !ukonczona;
@@ -101,23 +150,23 @@ export default function StronaLekcji({ params }) {
   };
 
   const renderSektor = (sektor, idx) => {
-    switch (sektor.typ) {
-      case "tekst":
-        return <p key={idx}>{sektor.wartosc}</p>;
-      case "obraz":
+    switch (sektor.type) {
+      case "text":
+        return <p key={idx}>{sektor.value}</p>;
+      case "image":
         return (
           <img
             key={idx}
-            src={sektor.wartosc}
-            alt={sektor.alt || "obraz"}
+            src={sektor.value}
+            alt={sektor.alternative || "obraz"}
             className="my-6 rounded-lg shadow-lg mx-auto"
           />
         );
-      case "film":
+      case "video":
         return (
           <div key={idx} className="my-6 aspect-video">
             <iframe
-              src={sektor.wartosc}
+              src={sektor.value}
               title="Film"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -141,18 +190,18 @@ export default function StronaLekcji({ params }) {
         <div className="relative z-10 container mx-auto px-4 text-white max-w-4xl">
           <div className="flex items-center gap-2 mb-6">
             <Link
-              href={`/courses/${kurs.id}`}
+              href={`/courses/${courseId}`}
               className="text-sm hover:underline flex items-center gap-1"
             >
               <FaArrowLeft /> (Wróć do kursu)
             </Link>
           </div>
 
-          <h1 className="text-4xl font-bold mb-2">{lekcja.tytul}</h1>
-          <p className="text-gray-200 mb-8 text-sm">Czas trwania: {lekcja.czas}</p>
+          <h1 className="text-4xl font-bold mb-2">{lessons[thisLesson].name}</h1>
+          <p className="text-gray-200 mb-8 text-sm">Czas trwania: {lessons[thisLesson].description}</p>
 
           <article className="prose prose-invert max-w-none leading-relaxed">
-            {lekcja.sektory.map(renderSektor)}
+            {sectors.map(renderSektor)}
           </article>
 
           <button
@@ -168,10 +217,10 @@ export default function StronaLekcji({ params }) {
           <div className="flex justify-between mt-12">
             {poprzedniaLekcja ? (
               <Link
-                href={`/courses/${kurs.id}/${poprzedniaLekcja.id}`}
+                href={`/courses/${id}/${poprzedniaLekcja.id}`}
                 className="flex items-center gap-2 hover:underline"
               >
-                <FaArrowLeft /> {poprzedniaLekcja.tytul}
+                <FaArrowLeft /> {poprzedniaLekcja.name}
               </Link>
             ) : (
               <span />
@@ -179,10 +228,10 @@ export default function StronaLekcji({ params }) {
 
             {nastepnaLekcja ? (
               <Link
-                href={`/courses/${kurs.id}/${nastepnaLekcja.id}`}
+                href={`/courses/${courseId}/${nastepnaLekcja.id}`}
                 className="flex items-center gap-2 hover:underline"
               >
-                {nastepnaLekcja.tytul} <FaArrowRight />
+                {nastepnaLekcja.name} <FaArrowRight />
               </Link>
             ) : (
               <span />
