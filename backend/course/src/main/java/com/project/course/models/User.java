@@ -20,12 +20,23 @@ public class User {
   private String username;
   @Column(name = "isConfirmed")
   private char isConfirmed;
+  @Column(name = "photo_path")
+  private String photoPath;
+
   @ManyToMany
   @JoinTable(name = "user_finished_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
   private List<Course> finishedCoursesList;
   @ManyToMany
   @JoinTable(name = "user_finished_lessons", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "lesson_id"))
   private List<Lesson> finishedLessonsList;
+
+  public String getPhotoPath() {
+    return photoPath;
+  }
+
+  public void setPhotoPath(String photoPath) {
+    this.photoPath = photoPath;
+  }
 
   public char getIsConfirmed() {
     return isConfirmed;

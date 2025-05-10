@@ -34,7 +34,6 @@ public class UserService {
   private final EmailSenderService emailSenderService;
   private final BanRepository banRepository;
 
-  @Autowired
   public UserService(UserRepository userRepository,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager,
@@ -86,7 +85,6 @@ public class UserService {
     UserVerification userVerification = new UserVerification();
     userVerification.setEmail(user.getEmail());
     userVerification.setVerificationCode(verificationCode);
-
     userVerificationCodeService.save(userVerification);
     emailSenderService.sendEmail(user.getEmail(), "Spring User Account verification", verificationCode);
     userRepository.save(user);
