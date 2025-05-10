@@ -13,9 +13,11 @@ import com.project.course.models.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findByEmail(String email);
+
   Optional<User> findByUsername(String username);
 
   public boolean existsByEmail(String email);
+
   public boolean existsByUsername(String username);
 
   @Query("SELECT c.id FROM User u JOIN u.finishedCoursesList c WHERE u.email = :email")

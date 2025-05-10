@@ -9,7 +9,7 @@ import java.util.List;
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Long id;
   @Column(name = "email", unique = true)
   private String email;
   @Column(name = "password")
@@ -21,18 +21,10 @@ public class User {
   @Column(name = "isConfirmed")
   private char isConfirmed;
   @ManyToMany
-  @JoinTable(
-          name = "user_finished_courses",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "course_id")
-  )
+  @JoinTable(name = "user_finished_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
   private List<Course> finishedCoursesList;
   @ManyToMany
-  @JoinTable(
-          name = "user_finished_lessons",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "lesson_id")
-  )
+  @JoinTable(name = "user_finished_lessons", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "lesson_id"))
   private List<Lesson> finishedLessonsList;
 
   public char getIsConfirmed() {
@@ -51,11 +43,11 @@ public class User {
     this.roles = roles;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -75,8 +67,13 @@ public class User {
     this.password = password;
   }
 
-  public String getUsername() { return username; }
-  public void setUsername(String username) { this.username = username; }
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
   public List<Course> getFinishedCoursesList() {
     return finishedCoursesList;
