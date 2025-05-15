@@ -27,6 +27,18 @@ public class Lesson {
   @OneToMany(mappedBy = "lesson")
   @JsonIgnore
   private List<Sector> sectors = new ArrayList<>();
+  @OneToMany(mappedBy = "lesson")
+  @JsonIgnore
+  private List<Question> questions = new ArrayList<>();
+
+  public List<Question> getQuestions() {
+    return questions;
+  }
+
+  public void setQuestions(List<Question> questions) {
+    this.questions = questions;
+  }
+
   public Long getId() {
     return id;
   }

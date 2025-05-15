@@ -55,7 +55,8 @@ public class SecurityConfig {
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-ui.html", "/ban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids",
-                "/course/*/lessons", "/*/finished-lessons-ids","/course/*", "/sector/*")
+                "/course/*/lessons", "/*/finished-lessons-ids","/course/*", "/sector/*", "/question/*", "/question/lesson/*",
+                "/*/finished-lessons/*")
             .permitAll()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -30,6 +30,14 @@ public class User {
   @JoinTable(name = "user_finished_lessons", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "lesson_id"))
   private List<Lesson> finishedLessonsList;
 
+  public List<Lesson> getFinishedLessonsList() {
+    return finishedLessonsList;
+  }
+
+  public void setFinishedLessonsList(List<Lesson> finishedLessonsList) {
+    this.finishedLessonsList = finishedLessonsList;
+  }
+
   public String getPhotoPath() {
     return photoPath;
   }
