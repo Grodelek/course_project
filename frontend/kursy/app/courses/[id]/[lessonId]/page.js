@@ -72,6 +72,11 @@ export default function StronaLekcji({ params }) {
   const [lessons, setLessons] = useState([]);
   const [error, setError] = useState("");
   const kluczStorage = `kurs:${courseId}:lekcja:${lessonId}:ukonczona`;
+
+
+  const lekcjeZQuizem = [3];
+  const maQuiz = lekcjeZQuizem.includes(Number(lessonId));
+
   useEffect(() => {
     setUkonczona(localStorage.getItem(kluczStorage) === "1");
   }, [kluczStorage]);
@@ -213,6 +218,17 @@ export default function StronaLekcji({ params }) {
             {ukonczona ? "Lekcja ukończona" : "Oznacz jako ukończoną"}
             {flash && <span className="ml-2 text-xs">✔︎</span>}
           </button>
+
+          {maQuiz && (
+            <div className="mt-10 inline-flex items-center gap-2 px-6 py-3 rounded-md transition">
+              <Link
+                href={`/courses/${courseId}/${lessonId}/quiz`}
+                className="inline-block px-8 py-4 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold shadow-md transition"
+              >
+                Rozwiąż quiz
+              </Link>
+            </div>
+          )}
 
           <div className="flex justify-between mt-12">
             {poprzedniaLekcja ? (
