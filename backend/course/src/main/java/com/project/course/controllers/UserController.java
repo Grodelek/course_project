@@ -64,6 +64,12 @@ public class UserController {
       @PathVariable Long courseId) {
     return userService.addFinishedCourseByEmail(email, courseId);
   }
+  @PostMapping("/{email}/finished-lessons/{lessonId}")
+  public ResponseEntity<?> addFinishedLessonByEmail(
+          @PathVariable String email,
+          @PathVariable Long lessonId) {
+    return userService.addFinishedLessonByEmail(email, lessonId);
+  }
 
   @GetMapping("/{email}/finished-course-ids")
   public ResponseEntity<List<Long>> getFinishedCourseIds(@PathVariable String email) {
