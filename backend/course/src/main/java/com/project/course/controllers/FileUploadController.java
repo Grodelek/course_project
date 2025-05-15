@@ -1,9 +1,12 @@
 package com.project.course.controllers;
 
+import java.io.InputStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +21,8 @@ public class FileUploadController {
   private FileService fileService;
 
   @PostMapping("/upload")
-  public ResponseEntity<FileUploadDTO> uploadFile(@RequestParam("file") MultipartFile file) {
-    return new ResponseEntity<>(fileService.uploadFile(file), HttpStatus.OK);
+  public ResponseEntity<FileUploadDTO> uploadFile(@RequestParam("file") MultipartFile file,
+      @RequestParam("email") String email) {
+    return new ResponseEntity<>(fileService.uploadFile(file, email), HttpStatus.OK);
   }
 }

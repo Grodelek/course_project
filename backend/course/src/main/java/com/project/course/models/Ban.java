@@ -9,7 +9,7 @@ import java.util.Date;
 public class Ban {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Long id;
   @Column(name = "date_start")
   private Date date_start;
   @Column(name = "date_end")

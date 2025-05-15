@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface BanRepository extends JpaRepository<Ban, Long> {
-    Optional<Ban> findByEmail(String email);
+  Optional<Ban> findByEmail(String email);
 
-    public boolean existsByEmail(String email);
+  public boolean existsByEmail(String email);
 }

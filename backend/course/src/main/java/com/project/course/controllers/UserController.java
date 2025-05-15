@@ -22,7 +22,6 @@ import java.util.List;
 public class UserController {
   private final UserService userService;
 
-  @Autowired
   public UserController(UserService userService) {
     this.userService = userService;
   }
@@ -55,13 +54,14 @@ public class UserController {
   @GetMapping("/user/username")
   public ResponseEntity<?> getUserName(@RequestParam String email) {
     return userService.findByEmail(email)
-            .map(user -> ResponseEntity.ok(user.getUsername()))
-            .orElse(ResponseEntity.notFound().build());
+        .map(user -> ResponseEntity.ok(user.getUsername()))
+        .orElse(ResponseEntity.notFound().build());
   }
+
   @PostMapping("/{email}/finished-courses/{courseId}")
   public ResponseEntity<?> addFinishedCourseByEmail(
-          @PathVariable String email,
-          @PathVariable Long courseId) {
+      @PathVariable String email,
+      @PathVariable Long courseId) {
     return userService.addFinishedCourseByEmail(email, courseId);
   }
 

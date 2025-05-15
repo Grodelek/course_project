@@ -9,7 +9,7 @@ import java.util.List;
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Long id;
   @Column(name = "email", unique = true)
   private String email;
   @Column(name = "password")
@@ -20,20 +20,23 @@ public class User {
   private String username;
   @Column(name = "isConfirmed")
   private char isConfirmed;
+  @Column(name = "photo_path")
+  private String photoPath;
+
   @ManyToMany
-  @JoinTable(
-          name = "user_finished_courses",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "course_id")
-  )
+  @JoinTable(name = "user_finished_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
   private List<Course> finishedCoursesList;
   @ManyToMany
-  @JoinTable(
-          name = "user_finished_lessons",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "lesson_id")
-  )
+  @JoinTable(name = "user_finished_lessons", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "lesson_id"))
   private List<Lesson> finishedLessonsList;
+
+  public String getPhotoPath() {
+    return photoPath;
+  }
+
+  public void setPhotoPath(String photoPath) {
+    this.photoPath = photoPath;
+  }
 
   public char getIsConfirmed() {
     return isConfirmed;
@@ -51,11 +54,11 @@ public class User {
     this.roles = roles;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -75,8 +78,13 @@ public class User {
     this.password = password;
   }
 
-  public String getUsername() { return username; }
-  public void setUsername(String username) { this.username = username; }
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
   public List<Course> getFinishedCoursesList() {
     return finishedCoursesList;
