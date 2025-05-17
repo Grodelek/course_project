@@ -5,9 +5,13 @@ import { FaHome, FaChalkboard, FaSignOutAlt, FaCog, FaRoute, FaUserAlt } from "r
 import { useRouter } from "next/navigation";
 
 export default function Navigation() {
-  const userProfileImage = "";
   const router = useRouter();
   const [name, setName] = useState("Gość");
+  const [photoPath, setPhotoPath] = useState("");
+
+  const profileImgUrl = photoPath
+    ? `https://courseapp-bucket.s3.eu-north-1.amazonaws.com/${photoPath}`
+    : null;
 
   const handleSubmit = () =>{
     localStorage.clear();
@@ -15,46 +19,55 @@ export default function Navigation() {
     window.location.reload();
   };
 
-  useEffect(() => {
-    const stored = localStorage.getItem("userName");
-    if (stored) {
-      setName(stored);
-      return;
+useEffect(() => {
+  const stored = localStorage.getItem("userName");
+  if (stored) {
+    setName(stored);
+    const storedPhoto = localStorage.getItem("photoPath");
+    if (storedPhoto) {
+      setPhotoPath(storedPhoto);
     }
-    const token = localStorage.getItem("token");
-    const email = localStorage.getItem("email");
+    return;
+  }
 
-    fetch(`http://localhost:8080/user/username?email=${email}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        if(!res.ok) {
-          return res.text().then((text) => {
-            console.error("cos",text || "pusty");
-          })
-        }
-        return res.text();
-      })
-      .then((username) => {
-        setName(username);
-        localStorage.setItem("userName",username);
-      })
-  
-  }, []);
-  
-  
+  const token = localStorage.getItem("token");
+  const email = localStorage.getItem("email");
+  if (!token || !email) return;
+
+  fetch(
+    `http://localhost:8080/user/username?email=${encodeURIComponent(email)}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  )
+    .then((res) => {
+      if (!res.ok) {
+        return res.text().then((text) => {
+          console.error("Błąd pobierania userName:", text || res.status);
+        });
+      }
+      return res.json();
+    })
+    .then((data) => {
+      if (!data) return;
+      const { username, photoPath: backendPath } = data;
+      setName(username);
+      localStorage.setItem("userName", username);
+
+      if (backendPath) {
+        setPhotoPath(backendPath);
+        localStorage.setItem("photoPath", backendPath);
+      }
+    })
+    .catch((err) => console.error("Fetch error:", err));
+}, []);
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white/10 backdrop-blur-md text-white py-3 px-8 
-                    flex justify-between items-center border-b border-white/20 z-50 shadow-md">
-      
+    <nav className="fixed top-0 left-0 w-full bg-white/10 backdrop-blur-md text-white py-3 px-8 flex justify-between items-center border-b border-white/20 z-50 shadow-md">
       <div className="text-lg font-semibold flex items-center space-x-2">
-      {userProfileImage ? (
+        {profileImgUrl ? (
           <img
-            src={userProfileImage}
+            src={profileImgUrl}
             alt="Profil"
             className="w-10 h-10 rounded-full object-cover"
           />

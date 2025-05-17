@@ -4,6 +4,7 @@ import com.project.course.exceptions.UserAlreadyExistsException;
 import com.project.course.models.*;
 import com.project.course.repositories.BanRepository;
 import com.project.course.repositories.CourseRepository;
+import com.project.course.repositories.LessonRepository;
 import com.project.course.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Date;
@@ -33,6 +34,7 @@ public class UserService {
   private final UserVerificationCodeService userVerificationCodeService;
   private final EmailSenderService emailSenderService;
   private final BanRepository banRepository;
+  private final LessonRepository lessonRepository;
 
   public UserService(UserRepository userRepository,
       PasswordEncoder passwordEncoder,
@@ -40,7 +42,8 @@ public class UserService {
       JWTService jwtService,
       UserVerificationCodeService userVerificationCodeService,
       EmailSenderService emailSenderService,
-      BanRepository banRepository) {
+      BanRepository banRepository,
+      LessonRepository lessonRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
@@ -48,6 +51,7 @@ public class UserService {
     this.userVerificationCodeService = userVerificationCodeService;
     this.emailSenderService = emailSenderService;
     this.banRepository = banRepository;
+    this.lessonRepository = lessonRepository;
   }
 
   @Autowired
@@ -201,5 +205,25 @@ public class UserService {
 
   public List<Long> getFinishedLessonsIdsByEmail(String email) {
     return userRepository.findFinishedLessonsIdsByUserEmail(email);
+  }
+
+  @Transactional
+  public ResponseEntity<?> addFinishedLessonByEmail(String email, Long lessonId) {
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    Optional<Lesson> lessonOptional = lessonRepository.findById(lessonId);
+
+    if (userOptional.isPresent() && lessonOptional.isPresent()) {
+      User user = userOptional.get();
+      Lesson lesson = lessonOptional.get();
+
+      if (!user.getFinishedLessonsList().contains(lesson)) {
+        user.getFinishedLessonsList().add(lesson);
+        userRepository.save(user);
+      }
+
+      return ResponseEntity.ok("Course added to finished list.");
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found.");
+    }
   }
 }

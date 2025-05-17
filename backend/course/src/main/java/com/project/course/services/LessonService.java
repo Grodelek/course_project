@@ -3,6 +3,8 @@ package com.project.course.services;
 import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.course.models.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -57,5 +59,9 @@ public class LessonService {
       }
     }
     return ResponseEntity.ok().body("Lesson deleted");
+  }
+
+  public Optional<Lesson> findById(Long lessonId) {
+    return lessonRepository.findById(lessonId);
   }
 }
