@@ -4,35 +4,17 @@ import { useEffect, useState } from "react";
 
 export default function LoggedIn(){
     const [userName, setName] = useState("");
-    useEffect(() => {
-      const stored = localStorage.getItem("userName");
-      if (stored) {
-        setName(stored);
-        return;
-      }
-      const token = localStorage.getItem("token");
-      const email = localStorage.getItem("email");
-  
-      fetch(`http://localhost:8080/user/username?email=${email}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          if(!res.ok) {
-            return res.text().then((text) => {
-              console.error("cos",text || "pusty");
-            })
-          }
-          return res.text();
-        })
-        .then((username) => {
-          setName(username);
-          localStorage.setItem("userName",username);
-        })
-    
-    }, []);
+useEffect(() => {
+  const interval = setInterval(() => {
+    const val = localStorage.getItem("userName");
+    if (val) {
+      setName(val);
+      clearInterval(interval);
+    }
+  }, 100);
+  return () => clearInterval(interval);
+}, []);
+
     
     const videos = [
         "https://www.youtube.com/embed/0M1C9yEzplI?autoplay=1&mute=1",

@@ -233,7 +233,7 @@ export default function StronaLekcji({ params }) {
           <div className="flex justify-between mt-12">
             {poprzedniaLekcja ? (
               <Link
-                href={`/courses/${id}/${poprzedniaLekcja.id}`}
+                href={`/courses/${courseId}/${poprzedniaLekcja.id}`}
                 className="flex items-center gap-2 hover:underline"
               >
                 <FaArrowLeft /> {poprzedniaLekcja.name}
