@@ -1,5 +1,7 @@
 package com.project.course.services;
 
+import com.project.course.dto.UserDTO;
+import com.project.course.dto.VerificationCodeDTO;
 import com.project.course.exceptions.UserAlreadyExistsException;
 import com.project.course.models.*;
 import com.project.course.repositories.BanRepository;
@@ -11,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,11 +71,10 @@ public class UserService {
 
   public static String generateCode() {
     Random random = new Random();
-    StringBuilder code = new StringBuilder();
-    for (int i = 0; i < 6; i++) {
-      code.append(random.nextInt(10));
-    }
-    return code.toString();
+    return IntStream.range(0, 6)
+        .map(i -> random.nextInt(10))
+        .mapToObj(String::valueOf)
+        .collect(Collectors.joining());
   }
 
   @Transactional

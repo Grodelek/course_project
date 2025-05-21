@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
+import com.project.course.dto.UserDTO;
+import com.project.course.dto.VerificationCodeDTO;
 import com.project.course.models.User;
-import com.project.course.models.UserDTO;
-import com.project.course.models.VerificationCodeDTO;
 import com.project.course.services.UserService;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

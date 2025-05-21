@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.project.course.dto.RoadmapDTO;
 import com.project.course.models.Roadmap;
-import com.project.course.models.RoadmapDTO;
 import com.project.course.services.RoadmapService;
 
 @RestController

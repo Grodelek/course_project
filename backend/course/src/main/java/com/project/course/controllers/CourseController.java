@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.project.course.models.CourseDTO;
-import com.project.course.models.LessonDTO;
+import com.project.course.dto.CourseDTO;
+import com.project.course.dto.LessonDTO;
 import com.project.course.services.CourseService;
 import com.project.course.services.LessonService;
 

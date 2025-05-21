@@ -15,18 +15,22 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/question")
 public class QuestionController {
-    private QuestionService questionService;
-    private LessonService lessonService;
+  private QuestionService questionService;
+  private LessonService lessonService;
 
-    @Autowired
-    public QuestionController(QuestionService questionService, LessonService lessonService) {
-        this.questionService = questionService;
-        this.lessonService = lessonService;
-    }
+  @Autowired
+  public QuestionController(QuestionService questionService, LessonService lessonService) {
+    this.questionService = questionService;
+    this.lessonService = lessonService;
+  }
 
-    @GetMapping("/{lessonId}")
-    public List<?> getQuestionsByLessonId(@PathVariable Long lessonId) {return questionService.findBtLessonId(lessonId);}
+  @GetMapping("/{lessonId}")
+  public List<?> getQuestionsByLessonId(@PathVariable Long lessonId) {
+    return questionService.findBtLessonId(lessonId);
+  }
 
-    @GetMapping("/lesson/{lessonId}")
-    public Optional<Lesson> getLessonById(@PathVariable Long lessonId) {return lessonService.findById(lessonId);}
+  @GetMapping("/lesson/{lessonId}")
+  public Optional<Lesson> getLessonById(@PathVariable Long lessonId) {
+    return lessonService.findById(lessonId);
+  }
 }

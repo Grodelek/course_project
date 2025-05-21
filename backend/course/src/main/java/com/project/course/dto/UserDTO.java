@@ -1,4 +1,4 @@
-package com.project.course.models;
+package com.project.course.dto;
 
 public class UserDTO {
   private String email;
@@ -8,6 +8,7 @@ public class UserDTO {
   public String getUsername() {
     return username;
   }
+
   public void setUsername(String username) {
     this.username = username;
   }
