@@ -46,7 +46,7 @@ export default function Rejestracja() {
 
         if (res.status === 401)  { //tu powinno być 409
           setInvalidFields(["email"]);
-          setErrorTop("Ten adres e‑mail jest już zarejestrowany.");
+          setErrorTop("Ten adres e‑mail jest nieprawidlowy lub juz istnieje");
           setModalData({
             msg: "Chyba mamy już kogoś takiego! Spróbuj ponownie lub zaloguj się.",
             gif: "/oops1.gif",

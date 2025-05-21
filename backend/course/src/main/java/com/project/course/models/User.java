@@ -1,7 +1,7 @@
 package com.project.course.models;
 
 import jakarta.persistence.*;
-
+import jakarta.validation.constraints.Pattern;
 import java.util.List;
 
 @Entity
@@ -11,6 +11,7 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @Column(name = "email", unique = true)
+  @Pattern(regexp = "(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")
   private String email;
   @Column(name = "password")
   private String password;

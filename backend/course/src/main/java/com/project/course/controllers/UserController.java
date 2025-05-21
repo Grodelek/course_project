@@ -14,6 +14,9 @@ import com.project.course.dto.UserDTO;
 import com.project.course.dto.VerificationCodeDTO;
 import com.project.course.models.User;
 import com.project.course.services.UserService;
+
+import jakarta.validation.Valid;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,7 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+  public ResponseEntity<?> register(@RequestBody @Valid UserDTO userDTO) {
     return userService.register(userDTO);
   }
 
