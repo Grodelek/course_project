@@ -1,7 +1,10 @@
 package com.project.course.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,6 +26,9 @@ public class User {
   private char isConfirmed;
   @Column(name = "photo_path")
   private String photoPath;
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  private List<Comment> comments = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "user_finished_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
