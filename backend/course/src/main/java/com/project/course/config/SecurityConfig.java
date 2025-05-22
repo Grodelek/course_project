@@ -30,7 +30,6 @@ public class SecurityConfig {
   private final UserDetailsService userDetailsService;
   private final JwtFilter jwtFilter;
 
-  @Autowired
   public SecurityConfig(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
     this.userDetailsService = userDetailsService;
     this.jwtFilter = jwtFilter;

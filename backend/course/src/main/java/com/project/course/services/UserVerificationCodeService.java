@@ -1,6 +1,5 @@
 package com.project.course.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.course.models.UserVerification;
 import com.project.course.repositories.UserVerificationCodeRepository;
@@ -9,7 +8,6 @@ import com.project.course.repositories.UserVerificationCodeRepository;
 public class UserVerificationCodeService {
   private final UserVerificationCodeRepository userVerificationCodeRepository;
 
-  @Autowired
   public UserVerificationCodeService(UserVerificationCodeRepository userVerificationCodeRepository) {
     this.userVerificationCodeRepository = userVerificationCodeRepository;
   }

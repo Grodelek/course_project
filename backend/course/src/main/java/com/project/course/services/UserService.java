@@ -1,5 +1,6 @@
 package com.project.course.services;
 
+import com.project.course.dto.ResetPasswordDTO;
 import com.project.course.dto.UserDTO;
 import com.project.course.dto.VerificationCodeDTO;
 import com.project.course.exceptions.UserAlreadyExistsException;
@@ -109,9 +110,7 @@ public class UserService {
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
     }
-
     Optional<User> userOptional = findByEmail(userDTO.getEmail());
-
     if (userOptional.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
@@ -224,10 +223,41 @@ public class UserService {
         user.getFinishedLessonsList().add(lesson);
         userRepository.save(user);
       }
-
       return ResponseEntity.ok("Course added to finished list.");
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found.");
     }
+  }
+
+  @Transactional
+  public ResponseEntity<?> resetUserPassword(ResetPasswordDTO resetPasswordDTO, String email) {
+    if (email == null || resetPasswordDTO.getCurrentPassword() == null || resetPasswordDTO.getPassword() == null
+        || resetPasswordDTO.getConfirmPassword() == null) {
+      return ResponseEntity.badRequest().body("Email, password and confirm password are required");
+    }
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    }
+
+    if (!resetPasswordDTO.getPassword().equals(resetPasswordDTO.getConfirmPassword())) {
+      return ResponseEntity.badRequest().body("Passwords do not match");
+    }
+
+    if (resetPasswordDTO.getPassword().isBlank()) {
+      return ResponseEntity.badRequest().body("Password cannot be empty");
+    }
+
+    if (resetPasswordDTO.getPassword().length() < 8) {
+      return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
+    }
+    User user = userOptional.get();
+
+    if (!bCryptPasswordEncoder.matches(resetPasswordDTO.getCurrentPassword(), user.getPassword())) {
+      return ResponseEntity.badRequest().body("Current password is incorrect");
+    }
+
+    user.setPassword(bCryptPasswordEncoder.encode(resetPasswordDTO.getPassword()));
+    return ResponseEntity.ok().body("Password reset successfully");
   }
 }

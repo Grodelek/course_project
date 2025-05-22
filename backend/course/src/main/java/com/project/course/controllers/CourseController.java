@@ -1,7 +1,6 @@
 package com.project.course.controllers;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +21,6 @@ public class CourseController {
   private CourseService courseService;
   private LessonService lessonService;
 
-  @Autowired
   public CourseController(CourseService courseService, LessonService lessonService) {
     this.courseService = courseService;
     this.lessonService = lessonService;
