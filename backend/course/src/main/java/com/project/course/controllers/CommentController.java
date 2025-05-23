@@ -1,11 +1,11 @@
 package com.project.course.controllers;
 
+import com.project.course.dto.CommentDTO;
+import com.project.course.dto.CourseDTO;
 import com.project.course.models.Comment;
 import com.project.course.services.CommentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +21,9 @@ public class CommentController {
     @GetMapping("/{id}")
     public List<Comment> GetCommentsByCourseId(@PathVariable Long id) {
         return commentService.GetCommentsByCourseId(id);
+    }
+    @PostMapping("/add")
+    public ResponseEntity<?> addComment(@RequestBody CommentDTO commentDTO) {
+        return commentService.addCommentToCourse(commentDTO);
     }
 }
