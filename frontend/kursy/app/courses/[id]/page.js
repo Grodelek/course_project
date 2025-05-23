@@ -10,8 +10,10 @@ export default function CourseDetails({ params }) {
   //const { courseId } = resolvedParams.id || {};
   const [courseData, setCourseData] = useState([]);
   const [finishedLessons, setFinishedLessons] = useState([]);
+  const [finishedCourses, setFinishedCourses] = useState([]);
   const [course , setCourse] = useState([]);
   const [comments , setComments] = useState([]);
+  const [contents , setContents] = useState([]);
   const [error, setError] = useState("");
   useEffect(() => {
     async function fetchData(){
@@ -73,6 +75,20 @@ export default function CourseDetails({ params }) {
       const data4 = await response4.json();
       
       setComments(data4);
+
+      const response5 = await fetch(`http://localhost:8080/${email}/finished-course-ids`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      });
+      
+      if (!response5.ok) {
+          throw new Error(`Błąd `);
+      }
+      const data5 = await response5.json();
+      
+      setFinishedCourses(data5);
       
       } catch (err) {
           setError(err.message);
@@ -82,7 +98,7 @@ export default function CourseDetails({ params }) {
           }, []);
 
   
-  console.log(comments);
+  console.log(finishedCourses);
   
   const finishedSet = new Set(finishedLessons.map(String));
   const completedSteps = courseData.filter((lesson) =>
@@ -181,6 +197,21 @@ export default function CourseDetails({ params }) {
         
         <div className="bg-white/20 backdrop-blur-sm shadow-xl rounded-lg p-6 border border-white/30 text-white mt-10">
           <h2 className="text-2xl font-semibold mb-4">Komentarze:</h2>
+          {finishedCourses.includes(course.id) && (
+            <div className="mb-4">
+              <label htmlFor="contents" className="block font-semibold mb-2">
+                Skomentuj:
+              </label>
+              <textarea
+                id="contents"
+                value={contents}
+                onChange={(e) => setContents(e.target.value)}
+                required
+                className="bg-white/20 w-full"
+              />
+              
+            </div>
+          )}
           <ul className="space-y-2">
             {comments.map((comment) => {
               return(
