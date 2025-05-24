@@ -10,6 +10,8 @@ import com.project.course.repositories.CourseRepository;
 import com.project.course.repositories.LessonRepository;
 import com.project.course.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -117,10 +119,9 @@ public class UserService {
     Optional<Ban> banOptional = banRepository.findByEmail(userDTO.getEmail());
     if (banOptional.isPresent()) {
       Ban ban = banOptional.get();
-      Date now = new Date();
-      if (ban.getDate_end().after(now)) {
+      if (ban.getDateEnd().isAfter(LocalDate.now())) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(ban.getDate_start() + "|" + ban.getDate_end() + "|" + ban.getReason());
+            .body(ban.getDateStart() + "|" + ban.getDateEnd() + "|" + ban.getReason());
       }
     }
     User presentUser = userOptional.get();
