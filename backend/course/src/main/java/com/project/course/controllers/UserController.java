@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
-import com.project.course.models.User;
-import com.project.course.models.UserDTO;
-import com.project.course.models.VerificationCodeDTO;
-import com.project.course.services.UserService;
 
+import com.project.course.dto.ResetPasswordDTO;
+import com.project.course.dto.UserDTO;
+import com.project.course.dto.VerificationCodeDTO;
+import com.project.course.models.User;
+import com.project.course.services.UserService;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +37,7 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+  public ResponseEntity<?> register(@RequestBody @Valid UserDTO userDTO) {
     return userService.register(userDTO);
   }
 
@@ -89,5 +91,11 @@ public class UserController {
   public ResponseEntity<List<Long>> getFinishedLessonsIds(@PathVariable String email) {
     List<Long> lessonsIds = userService.getFinishedLessonsIdsByEmail(email);
     return ResponseEntity.ok(lessonsIds);
+  }
+
+  @PostMapping("/reset-password")
+  public ResponseEntity<?> resetUserPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO,
+      @RequestParam String email) {
+    return userService.resetUserPassword(resetPasswordDTO, email);
   }
 }

@@ -30,7 +30,6 @@ public class SecurityConfig {
   private final UserDetailsService userDetailsService;
   private final JwtFilter jwtFilter;
 
-  @Autowired
   public SecurityConfig(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
     this.userDetailsService = userDetailsService;
     this.jwtFilter = jwtFilter;
@@ -55,8 +54,9 @@ public class SecurityConfig {
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-ui.html", "/ban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids",
-                "/course/*/lessons", "/*/finished-lessons-ids","/course/*", "/sector/*", "/question/*", "/question/lesson/*",
-                "/*/finished-lessons/*")
+                "/course/*/lessons", "/*/finished-lessons-ids", "/course/*", "/sector/*", "/question/*",
+                "/question/lesson/*",
+                "/*/finished-lessons/*", "/comment/*")
             .permitAll()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

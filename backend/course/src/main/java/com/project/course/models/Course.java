@@ -31,6 +31,9 @@ public class Course {
   @OneToMany(mappedBy = "course")
   @JsonIgnore
   private List<Lesson> lessons = new ArrayList<>();
+  @OneToMany(mappedBy = "course")
+  @JsonIgnore
+  private List<Comment> comments = new ArrayList<>();
 
   public Roadmap getRoadmap() {
     return roadmap;

@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./backend/course
+    env_file:
+      - ./backend/course/.env
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend/kursy
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+

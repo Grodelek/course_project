@@ -1,13 +1,11 @@
 package com.project.course.repositories;
 
-import com.project.course.models.Lesson;
 import com.project.course.models.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
-public interface QuestionRepository  extends JpaRepository<Question, Long> {
-    List<Question> findByLessonId(Long lessonId);
+public interface QuestionRepository extends JpaRepository<Question, Long> {
+  List<Question> findByLessonId(Long lessonId);
 }

@@ -1,13 +1,11 @@
 package com.project.course.services;
 
-import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Optional;
 
 import com.project.course.models.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.project.course.models.Course;
 import com.project.course.models.Lesson;
-import com.project.course.models.LessonDTO;
+import com.project.course.dto.LessonDTO;
 import com.project.course.repositories.CourseRepository;
 import com.project.course.repositories.LessonRepository;
 

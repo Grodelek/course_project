@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.project.course.models.CourseDTO;
+import com.project.course.dto.CourseDTO;
 import com.project.course.models.Lesson;
 
 @Repository

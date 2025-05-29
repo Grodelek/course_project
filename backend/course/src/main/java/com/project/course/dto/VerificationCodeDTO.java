@@ -1,4 +1,4 @@
-package com.project.course.models;
+package com.project.course.dto;
 
 public class VerificationCodeDTO {
   private String verificationCode;

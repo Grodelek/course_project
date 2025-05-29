@@ -2,14 +2,11 @@ package com.project.course.security;
 
 import java.io.IOException;
 import java.util.UUID;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import com.project.course.models.User;
 import com.project.course.services.UserService;
-
-import org.hibernate.id.uuid.UuidValueGenerator;
 import org.springframework.security.core.Authentication;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

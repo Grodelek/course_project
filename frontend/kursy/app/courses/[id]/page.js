@@ -11,6 +11,7 @@ export default function CourseDetails({ params }) {
   const [courseData, setCourseData] = useState([]);
   const [finishedLessons, setFinishedLessons] = useState([]);
   const [course , setCourse] = useState([]);
+  const [comments , setComments] = useState([]);
   const [error, setError] = useState("");
   useEffect(() => {
     async function fetchData(){
@@ -31,6 +32,7 @@ export default function CourseDetails({ params }) {
           }
           const data = await response.json();
           setCourseData(data);
+
           const response2 = await fetch(`http://localhost:8080/${email}/finished-lessons-ids`, {
             method: "GET",
             headers: {
@@ -57,6 +59,20 @@ export default function CourseDetails({ params }) {
       const data3 = await response3.json();
       
       setCourse(data3);
+
+      const response4 = await fetch(`http://localhost:8080/comment/${courseId}`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      });
+      
+      if (!response4.ok) {
+          throw new Error(`Błąd `);
+      }
+      const data4 = await response4.json();
+      
+      setComments(data4);
       
       } catch (err) {
           setError(err.message);
@@ -66,7 +82,7 @@ export default function CourseDetails({ params }) {
           }, []);
 
   
-  
+  console.log(comments);
   
   const finishedSet = new Set(finishedLessons.map(String));
   const completedSteps = courseData.filter((lesson) =>
@@ -123,45 +139,83 @@ export default function CourseDetails({ params }) {
         </div>
 
         <div className="bg-white/20 backdrop-blur-sm shadow-xl rounded-lg p-6 border border-white/30 text-white">
-  <h2 className="text-2xl font-semibold mb-4">Lekcje:</h2>
-  <ul className="space-y-2">
-    {courseData.map((lesson) => {
-      const isCompleted = finishedSet.has(String(lesson.id));
-      return(
-        <li
-          key={lesson.id}
-          className="grid grid-cols-[1fr_auto_auto] items-center border-b border-white/30 py-3 gap-4"
-        >
-          <div>
-            <p className="font-semibold">{lesson.name}</p>
-            <p className="text-sm text-gray-200">{lesson.description}</p>
-          </div>
+          <h2 className="text-2xl font-semibold mb-4">Lekcje:</h2>
+          <ul className="space-y-2">
+            {courseData.map((lesson) => {
+              const isCompleted = finishedSet.has(String(lesson.id));
+              return(
+                <li
+                  key={lesson.id}
+                  className="grid grid-cols-[1fr_auto_auto] items-center border-b border-white/30 py-3 gap-4"
+                >
+                  <div>
+                    <p className="font-semibold">{lesson.name}</p>
+                    <p className="text-sm text-gray-200">{lesson.description}</p>
+                  </div>
 
-          <Link
-                      href={`/courses/${course.id}/${lesson.id}`}
-                      className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded transition"
-                    >
-                      Przejdź
-                    </Link>
+                  <Link
+                              href={`/courses/${course.id}/${lesson.id}`}
+                              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded transition"
+                            >
+                              Przejdź
+                            </Link>
 
-          <div className="justify-self-end">
-            {isCompleted ? (
-              <FaCheckCircle className="text-green-500 text-2xl" />
-            ) : (
-              <FaRegCheckCircle className="text-gray-500 text-2xl" />
+                  <div className="justify-self-end">
+                    {isCompleted ? (
+                      <FaCheckCircle className="text-green-500 text-2xl" />
+                    ) : (
+                      <FaRegCheckCircle className="text-gray-500 text-2xl" />
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+            {courseData.length === 0 && (
+                <li className="grid grid-cols-[1fr_auto_auto] items-center border-b border-white/30 py-3 gap-4">
+                  Brak lekcji do wyświetlenia.
+                </li>
             )}
-          </div>
-        </li>
-      );
-    })}
-    {courseData.length === 0 && (
-        <li className="grid grid-cols-[1fr_auto_auto] items-center border-b border-white/30 py-3 gap-4">
-          Brak lekcji do wyświetlenia.
-        </li>
-    )}
-      
-  </ul>
-</div>
+              
+          </ul>
+        </div>
+        
+        <div className="bg-white/20 backdrop-blur-sm shadow-xl rounded-lg p-6 border border-white/30 text-white mt-10">
+          <h2 className="text-2xl font-semibold mb-4">Komentarze:</h2>
+          <ul className="space-y-2">
+            {comments.map((comment) => {
+              return(
+                <li
+                  key={comment.id}
+                  className="grid grid-cols-[1fr_auto_auto] items-center border-b border-white/30 py-3 gap-4"
+                >
+                  <div>
+                    <p className="text-sm text-gray-200 flex justify-between">
+                      <span>{comment.user.username}</span>
+                      <span>
+                        {new Date(comment.create_date).toLocaleString('pl-PL', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </span>
+                    </p>
+                    <p className="font-semibold">{comment.contents}</p>
+                    
+                  </div>
+                </li>
+              );
+            })}
+            {comments.length === 0 && (
+                <li className="grid grid-cols-[1fr_auto_auto] items-center border-b border-white/30 py-3 gap-4">
+                  Brak komentarzy do wyświetlenia.
+                </li>
+            )}
+              
+          </ul>
+        </div>
+
       </div>
     </section>
     </Brama>
