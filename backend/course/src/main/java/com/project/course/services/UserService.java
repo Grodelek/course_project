@@ -1,8 +1,6 @@
 package com.project.course.services;
 
-import com.project.course.dto.ResetPasswordDTO;
-import com.project.course.dto.UserDTO;
-import com.project.course.dto.VerificationCodeDTO;
+import com.project.course.dto.*;
 import com.project.course.exceptions.UserAlreadyExistsException;
 import com.project.course.models.*;
 import com.project.course.repositories.BanRepository;
@@ -260,5 +258,43 @@ public class UserService {
 
     user.setPassword(bCryptPasswordEncoder.encode(resetPasswordDTO.getPassword()));
     return ResponseEntity.ok().body("Password reset successfully");
+  }
+
+  @Transactional
+  public ResponseEntity<?> changeUsername(ChangeUsernameDTO changeUsernameDTO, String email) {
+    if (email == null || changeUsernameDTO.getNewUsername() == null || changeUsernameDTO.getCurrentPassword() == null) {
+      return ResponseEntity.badRequest().body("Email, password and new username are required");
+    }
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    }
+    User user = userOptional.get();
+    if (!bCryptPasswordEncoder.matches(changeUsernameDTO.getCurrentPassword(), user.getPassword())) {
+      return ResponseEntity.badRequest().body("Current password is incorrect");
+    }
+
+    user.setUsername(changeUsernameDTO.getNewUsername());
+
+    return ResponseEntity.ok().body("Username changed successfully");
+  }
+
+  @Transactional
+  public ResponseEntity<?> changeEmail(ChangeEmailDTO changeEmailDTO, String email) {
+    if (email == null || changeEmailDTO.getNewEmail() == null || changeEmailDTO.getCurrentPassword() == null) {
+      return ResponseEntity.badRequest().body("Email, password and new email are required");
+    }
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    }
+    User user = userOptional.get();
+    if (!bCryptPasswordEncoder.matches(changeEmailDTO.getCurrentPassword(), user.getPassword())) {
+      return ResponseEntity.badRequest().body("Current password is incorrect");
+    }
+
+    user.setEmail(changeEmailDTO.getNewEmail());
+
+    return ResponseEntity.ok().body("Email changed successfully");
   }
 }

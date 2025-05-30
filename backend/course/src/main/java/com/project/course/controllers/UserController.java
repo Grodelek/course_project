@@ -1,5 +1,6 @@
 package com.project.course.controllers;
 
+import com.project.course.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
-import com.project.course.dto.ResetPasswordDTO;
-import com.project.course.dto.UserDTO;
-import com.project.course.dto.VerificationCodeDTO;
 import com.project.course.models.User;
 import com.project.course.services.UserService;
 import jakarta.validation.Valid;
@@ -97,5 +95,17 @@ public class UserController {
   public ResponseEntity<?> resetUserPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO,
       @RequestParam String email) {
     return userService.resetUserPassword(resetPasswordDTO, email);
+  }
+
+  @PostMapping("/change-username")
+  public ResponseEntity<?> changeUsername(@Valid @RequestBody ChangeUsernameDTO changeUsernameDTO,
+                                          @RequestParam String email) {
+    return userService.changeUsername(changeUsernameDTO, email);
+  }
+
+  @PostMapping("/change-email")
+  public ResponseEntity<?> changeEmail(@Valid @RequestBody ChangeEmailDTO changeEmailDTO,
+                                          @RequestParam String email) {
+    return userService.changeEmail(changeEmailDTO, email);
   }
 }

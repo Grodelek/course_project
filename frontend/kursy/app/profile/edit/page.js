@@ -41,10 +41,13 @@ export default function EdytujProfil() {
     setNowaNazwa(username || "");
   }, [router]);
 
+
+
   //  jak po wyjściu będą jakie błędy lub nawet wejsciu ponownym to będzie trzeba tu dodać zerowanie pól
   const anulujZmiany = () => {
   router.push("/profile");
 };
+
 /*
 przelaczx
 to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji więc tak inputy muszą być ciągle wyświetlone aby doszło do zmianny (o ile była zmianna)
@@ -106,6 +109,89 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
       return;
     }
 
+    
+    if (zmienionoNazwe) {
+      try {
+            const currentPassword = aktualneHaslo;
+            const newUsername = nowaNazwa;
+            
+            const response = await fetch(`http://localhost:8080/change-username?email=${encodeURIComponent(emailZapisany)}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ currentPassword, newUsername }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(errorText);
+              setBlad(errorText);
+              return;
+            }
+
+            localStorage.setItem("userName", nowaNazwa);
+          }
+        catch (err) {
+          return;
+        }
+    }
+
+    if (zmienionoEmail){
+      try {
+            const currentPassword = aktualneHaslo;
+            
+            const response = await fetch(`http://localhost:8080/change-email?email=${encodeURIComponent(emailZapisany)}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ currentPassword, newEmail: nowyEmail }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(errorText);
+              setBlad(errorText);
+              return;
+            }
+
+            localStorage.setItem("email", nowyEmail);
+          }
+        catch (err) {
+          return;
+        }
+    }
+
+    if (zmienionoZdjecie) {
+      const form = new FormData();
+      form.append("file", plik);
+      form.append("email", emailZapisany);
+
+      try {
+        const res = await fetch("http://localhost:8080/api/s3/upload", {
+          method: "POST",
+          body: form,
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(txt || `Status ${res.status}`);
+        }
+
+        const text = await res.text();
+        if (!text) throw new Error("Brak odpowiedzi z serwera");
+        const data = JSON.parse(text);
+
+        localStorage.setItem("photoPath", data.filePath);
+        // to tylko zmienia w localstorage
+      } catch (err) {
+        console.error("Błąd uploadu:", err);
+        setBlad(`Nie udało się zapisać zmian: ${err.message}`);
+      }
+
+    }
+
     if (edycjaHasla) {
       if (!aktualneHaslo.trim() || !noweHaslo.trim() || !powtorzHaslo.trim()) {
         setBlad("Wszystkie pola hasła są wymagane.");
@@ -115,45 +201,31 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
         setBlad("Nowe hasło i potwierdzenie muszą być takie same.");
         return;
       }
+       try {
+            const currentPassword = aktualneHaslo;
+            const password = noweHaslo;
+            const confirmPassword = powtorzHaslo;
+            const response = await fetch(`http://localhost:8080/reset-password?email=${encodeURIComponent(emailZapisany)}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ currentPassword, password, confirmPassword }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(errorText);
+              setBlad(errorText);
+              return;
+            }
+          }
+        catch (err) {
+          return;
+        }
     }
 
-
-    if (!zmienionoZdjecie) {
-      if (zmienionoNazwe) localStorage.setItem("userName", nowaNazwa);
-      if (zmienionoEmail) localStorage.setItem("email", nowyEmail);
-      router.push("/profile");
-      return;
-    }
-
-    const form = new FormData();
-    form.append("file", plik);
-    form.append("email", emailZapisany);
-
-    try {
-      const res = await fetch("http://localhost:8080/api/s3/upload", {
-        method: "POST",
-        body: form,
-      });
-
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(txt || `Status ${res.status}`);
-      }
-
-      const text = await res.text();
-      if (!text) throw new Error("Brak odpowiedzi z serwera");
-      const data = JSON.parse(text);
-
-      localStorage.setItem("photoPath", data.filePath);
-      // to tylko zmienia w localstorage
-      if (zmienionoNazwe) localStorage.setItem("userName", nowaNazwa);
-      if (zmienionoEmail) localStorage.setItem("email", nowyEmail);
-
-      router.push("/profile");
-    } catch (err) {
-      console.error("Błąd uploadu:", err);
-      setBlad(`Nie udało się zapisać zmian: ${err.message}`);
-    }
+    
   };
 
   return (
@@ -246,13 +318,7 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
                   edycjaHasla ? "max-h-80 mt-2" : "max-h-0"
                 }`}
               >
-                <input
-                  type="password"
-                  placeholder="Aktualne hasło"
-                  value={aktualneHaslo}
-                  onChange={(e) => setAktualneHaslo(e.target.value)}
-                  className="block w-full bg-white/10 border border-white/30 rounded px-3 py-2 text-white focus:ring focus:ring-blue-400 mb-2"
-                />
+                
                 <input
                   type="password"
                   placeholder="Nowe hasło"
@@ -302,11 +368,20 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
                 />
               )}
             </div>
-
+            <div>
+              <input
+                  type="password"
+                  placeholder="Aktualne hasło"
+                  value={aktualneHaslo}
+                  onChange={(e) => setAktualneHaslo(e.target.value)}
+                  className="block w-full bg-white/10 border border-white/30 rounded px-3 py-2 text-white focus:ring focus:ring-blue-400 mb-2"
+                />
+            </div>
             {blad && <p className="text-red-400 text-sm">{blad}</p>}
 
             <button
-              type="submit"
+              type="button"
+              onClick={wyslijFormularz}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded transition"
             >
               Zapisz zmiany

@@ -111,7 +111,7 @@ export default function StronaProfilu() {
               {aktualneKursy.map((kurs) => (
                 <Link key={kurs.id} href={`/courses/${kurs.id}`}>
                   <div className="group bg-white/10 hover:bg-white/20 rounded-lg p-4 flex items-center justify-between transition">
-                    <span>{kurs.tytul}</span>
+                    <div className="w-60">{kurs.tytul}</div>
                     <div className="w-32 h-3 bg-gray-600 rounded-full overflow-hidden">
                       <div
                         className="bg-green-500 h-full transition-width"
