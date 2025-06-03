@@ -61,7 +61,19 @@ public class CommentService {
         User user = userOpt.get();
         comment.setUser(user);
         comment.setCreate_date(new Date());
-        commentRepository.save(comment);
-        return ResponseEntity.status(HttpStatus.OK).body("Comment added!");
+        Optional<Comment> existingCommentOpt = commentRepository.findByUserIdAndCourseId(user.getId(), course.getId());
+
+        if (existingCommentOpt.isPresent()){
+            comment = existingCommentOpt.get();
+            comment.setContents(commentDTO.getContents());
+            comment.setCreate_date(new Date());
+            commentRepository.save(comment);
+            return ResponseEntity.status(HttpStatus.OK).body("Comment updated!");
+        }
+        else{
+            commentRepository.save(comment);
+            return ResponseEntity.status(HttpStatus.OK).body("Comment added!");
+        }
+
     }
 }

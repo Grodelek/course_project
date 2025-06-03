@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import Brama from "@/app/components/auth/Brama";
 import Link from "next/link";
@@ -7,6 +7,7 @@ import { FaCheckCircle, FaRegCheckCircle } from "react-icons/fa";
 
 export default function CourseDetails({ params }) {
   const resolvedParams = use(params);
+
   //const { courseId } = resolvedParams.id || {};
   const [courseData, setCourseData] = useState([]);
   const [finishedLessons, setFinishedLessons] = useState([]);
@@ -15,11 +16,12 @@ export default function CourseDetails({ params }) {
   const [comments, setComments] = useState([]);
   const [contents, setContents] = useState([]);
   const [error, setError] = useState("");
+  const [email, setEmail] = useState(typeof window !== "undefined" ? localStorage.getItem("email") || "" : "");
+  const [courseId, setCourseId] = useState(resolvedParams.id);
+  const [isEditing, setIsEditing] = useState(false);
   useEffect(() => {
     async function fetchData() {
-      const courseId = resolvedParams.id || {};
-      setError("");
-      const email = localStorage.getItem("email");
+      setError(""); 
       try {
 
         const response = await fetch(`http://localhost:8080/course/${courseId}/lessons`, {
@@ -75,6 +77,7 @@ export default function CourseDetails({ params }) {
         const data4 = await response4.json();
 
         setComments(data4);
+        
 
         const response5 = await fetch(`http://localhost:8080/${email}/finished-course-ids`, {
           method: "GET",
@@ -90,15 +93,27 @@ export default function CourseDetails({ params }) {
 
         setFinishedCourses(data5);
 
+
+        
       } catch (err) {
         setError(err.message);
       }
     }
     fetchData();
+
   }, []);
 
+  useEffect(() => {
+    if (!email || comments.length === 0) return;
 
-  console.log(finishedCourses);
+    const user_com = comments.find(comment => comment.user.email === email);
+    if (user_com) {
+      setIsEditing(true);
+      setContents(user_com.contents);
+    }
+  }, [comments, email]);
+
+  //console.log(finishedCourses);
 
   const finishedSet = new Set(finishedLessons.map(String));
   const completedSteps = courseData.filter((lesson) =>
@@ -111,7 +126,31 @@ export default function CourseDetails({ params }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const course_id = courseId;
+      const user_email = email;
+      const response = await fetch("http://localhost:8080/comment/add", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ contents, course_id, user_email }),
+      });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(errorText);
+      }
+      
+      const anwser = await response.text();
+      if(anwser){
+        console.log(anwser);
+        window.location.reload();
+      }
+
+    } catch (err) {
+      setErrorTop(err.message);
+    }
   }
 
 
@@ -205,7 +244,7 @@ export default function CourseDetails({ params }) {
             {finishedCourses.includes(course.id) && (
               <div className="mb-4">
                 <label htmlFor="contents" className="block font-semibold mb-2">
-                  Skomentuj:
+                  {isEditing ? 'Edytuj komentarz:' : 'Skomentuj:'}
                 </label>
                 <textarea
                   id="contents"
@@ -219,7 +258,7 @@ export default function CourseDetails({ params }) {
                   onClick={handleSubmit}
                   className="w-full bg-blue-700 hover:bg-blue-800 text-white py-2 rounded transition-colors duration-200 font-semibold mb-4"
                 >
-                  Dodaj komentarz
+                  {isEditing ? 'Zapisz zmiany' : 'Dodaj komentarz'}
                 </button>
               </div>
             )}
