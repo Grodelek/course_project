@@ -300,29 +300,37 @@ public class UserService {
     return ResponseEntity.ok().body("Email changed successfully");
   }
 
-  public Dictionary<Course, Integer> getCoursesPretenge(String email){
+  public List<CourseProgressDTO> getCoursesPercentage(String email) {
+    List<CourseProgressDTO> response = new ArrayList<>();
     Optional<User> userOptional = userRepository.findByEmail(email);
-    Dictionary<Course, Integer> response = null;
-    if(!userOptional.isPresent()){
-      return null;
+
+    if (!userOptional.isPresent()) {
+      return response;
     }
+
     User user = userOptional.get();
     List<Course> courses = courseService.getCourses();
     List<Long> finishedLessons = getFinishedLessonsIdsByEmail(email);
 
-    for(Course course : courses){
+    for (Course course : courses) {
       int finished = 0;
       int all = 0;
-      for(Lesson lesson : course.getLessons()){
+      for (Lesson lesson : course.getLessons()) {
         all++;
-        if(finishedLessons.contains(lesson.getId())){
+        if (finishedLessons.contains(lesson.getId())) {
           finished++;
         }
       }
-      response.put(course, all/finished);
+      int percentage = (all == 0) ? 0 : (int) ((finished * 100.0) / all);
+      if(percentage>0 && percentage<100){
+        response.add(new CourseProgressDTO(course.getName(), course.getId(), percentage));
+      }
     }
+
     return response;
   }
+
+
 
   public List<User> findAllUsers(){
     return userRepository.findAll();
