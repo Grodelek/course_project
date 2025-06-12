@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Brama from "../../components/auth/Brama";
-
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function Roadmaps() {
   const [roadmapsData, setRoadmapsData] = useState([]);
@@ -48,7 +48,11 @@ export default function Roadmaps() {
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
-
+  // Dla Andrzeja
+  const edytujKurs = (id) => {
+  };
+  const usuńKurs = async (id) => {
+  };
   return (
     <Brama>
 <section
@@ -86,9 +90,21 @@ export default function Roadmaps() {
                   <td className="px-6 py-4 whitespace-nowrap">{roadmap.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{roadmap.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{roadmap.courseList.length}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    Tu coś będzie
-                  </td>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => edytujKurs(roadmap.id)}
+                      className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded transition"
+                    >
+                      <FaEdit /> Edytuj
+                    </button>
+
+                    <button
+                      onClick={() => usuńKurs(roadmap.id)}
+                      className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition"
+                    >
+                      <FaTrash /> Usuń
+                    </button>
+                  </div>
                 </tr>
               ))}
               {currentData.length === 0 && (

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Brama from "../../components/auth/Brama";
-
+import { FaBan, FaUndo, FaTrash } from "react-icons/fa";
 
 export default function Users() {
   //const [coursesData, setCoursesData] = useState([]);
@@ -49,7 +49,13 @@ export default function Users() {
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
-
+  // Dla Andrzeja
+  const zbanujKonto = async (id) => {
+  };
+  const odbanujKonto = async (id) => {
+  };
+  const usuńKurs = async (id) => {
+  };
   return (
     <Brama>
 <section
@@ -87,9 +93,30 @@ export default function Users() {
                   <td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.username}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    Tu coś będzie
-                  </td>
+                  <div className="flex gap-2">
+                    {user.banned ? (
+                      <button
+                        onClick={() => odbanujKonto(user.id)}
+                        className="flex items-center gap-1 bg-green-600 hover:bg-green-700 px-3 py-1 rounded transition"
+                      >
+                        <FaUndo /> Odbanuj
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => zbanujKonto(user.id)}
+                        className="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded transition"
+                      >
+                        <FaBan /> Zbanuj
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => usuńKurs(user.id)}
+                      className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition"
+                    >
+                      <FaTrash /> Usuń
+                    </button>
+                  </div>
                 </tr>
               ))}
               {currentData.length === 0 && (

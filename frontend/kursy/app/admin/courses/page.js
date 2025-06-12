@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Brama from "../../components/auth/Brama";
-
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function Courses() {
   //const [coursesData, setCoursesData] = useState([]);
@@ -50,6 +50,11 @@ export default function Courses() {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
+  // Dla Andrzeja
+  const edytujKurs = (id) => {
+  };
+  const usuńKurs = async (id) => {
+  };
   return (
     <Brama>
 <section
@@ -61,7 +66,7 @@ export default function Courses() {
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-gray-800/80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-8 text-white">Użytkownicy</h1>
+        <h1 className="text-4xl font-bold text-center mb-8 text-white">Kursy</h1>
 
         <div className="bg-white/20 backdrop-blur-sm shadow-xl rounded-lg p-6 border border-white/30">
           <table className="min-w-full text-white">
@@ -88,8 +93,23 @@ export default function Courses() {
                   <td className="px-6 py-4 whitespace-nowrap">{course.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{course.description}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    Tu coś będzie
-                  </td>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => edytujKurs(course.id)}
+                      className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded transition"
+                    >
+                      <FaEdit /> Edytuj
+                    </button>
+
+                    <button
+                      onClick={() => usuńKurs(course.id)}
+                      className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition"
+                    >
+                      <FaTrash /> Usuń
+                    </button>
+                  </div>
+                </td>
+
                 </tr>
               ))}
               {currentData.length === 0 && (
