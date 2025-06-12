@@ -20,46 +20,6 @@ function pobierzKurs(idKursu) {
             { typ: "film",  wartosc: "https://www.youtube.com/embed/20SHvU2PKsM" },
           ],
         },
-        {
-          id: 2,
-          tytul: "Struktura dokumentu HTML",
-          czas: "45m",
-          sektory: [
-            { typ: "obraz", wartosc: "https://how2html.pl/wp-content/uploads/2014/08/struktura-dokumentu-html.jpg", alt: "Schemat dokumentu HTML" },
-            { typ: "tekst", wartosc: "Każdy dokument HTML rozpoczyna się deklaracją <!DOCTYPE html>, po której następują elementy <html>, <head> i <body>." },
-            { typ: "film", wartosc: "https://www.youtube.com/embed/kUMe1FH4CHE" },
-          ],
-        },
-        {
-          id: 3,
-          tytul: "Podstawowe tagi HTML",
-          czas: "1h",
-          sektory: [
-            { typ: "film", wartosc: "https://www.youtube.com/embed/UB1O30fR-EE" },
-            { typ: "tekst", wartosc: "Do najczęściej używanych znaczników należą <h1>–<h6> dla nagłówków, <p> dla akapitów, <a> dla linków oraz <img> do osadzania obrazów." },
-            { typ: "obraz", wartosc: "https://strategiczni.pl/wp-content/uploads/2021/07/naglowki-html.jpg", alt: "Najważniejsze tagi HTML" },
-          ],
-        },
-        {
-          id: 4,
-          tytul: "Formularze w HTML",
-          czas: "50m",
-          sektory: [
-            { typ: "tekst", wartosc: "Formularze pozwalają użytkownikom przesyłać dane na serwer. Podstawą jest element <form> oraz pola <input>, <textarea>, <select>." },
-            { typ: "obraz", wartosc: "https://ferrante.pl/books/html/img/chapter9/form-blocks.png", alt: "Przykładowy formularz" },
-            { typ: "film", wartosc: "https://www.youtube.com/embed/Ss6cPGRcvCE" },
-          ],
-        },
-        {
-          id: 5,
-          tytul: "Zaawansowane techniki HTML",
-          czas: "1h15m",
-          sektory: [
-            { typ: "tekst", wartosc: "Poznasz elementy semantyczne (<header>, <main>, <article>, <section>), a także multimedia (<video>, <audio>) i atrybuty ARIA." },
-            { typ: "film", wartosc: "https://www.youtube.com/embed/DPnqb74Smug" },
-            { typ: "obraz", wartosc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6935wo8bLZh5FeafJEffqWKDOpNpx6UE5bg&s", alt: "HTML5 Logo" },
-          ],
-        },
       ],
     };
   }
