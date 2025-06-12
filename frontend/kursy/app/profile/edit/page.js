@@ -137,31 +137,7 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
         }
     }
 
-    if (zmienionoEmail){
-      try {
-            const currentPassword = aktualneHaslo;
-            
-            const response = await fetch(`http://localhost:8080/change-email?email=${encodeURIComponent(emailZapisany)}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ currentPassword, newEmail: nowyEmail }),
-            });
-
-            if (!response.ok) {
-              const errorText = await response.text();
-              console.error(errorText);
-              setBlad(errorText);
-              return;
-            }
-
-            localStorage.setItem("email", nowyEmail);
-          }
-        catch (err) {
-          return;
-        }
-    }
+    
 
     if (zmienionoZdjecie) {
       const form = new FormData();
@@ -191,6 +167,32 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
       }
 
     }
+    if (zmienionoEmail){
+      try {
+            const currentPassword = aktualneHaslo;
+
+            const response = await fetch(`http://localhost:8080/change-email?email=${encodeURIComponent(emailZapisany)}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ currentPassword, newEmail: nowyEmail }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(errorText);
+              setBlad(errorText);
+              return;
+            }
+
+            localStorage.setItem("email", nowyEmail);
+          }
+        catch (err) {
+          return;
+        }
+    }
+
 
     if (edycjaHasla) {
       if (!aktualneHaslo.trim() || !noweHaslo.trim() || !powtorzHaslo.trim()) {
@@ -202,10 +204,14 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
         return;
       }
        try {
+            let email = emailZapisany;
+            if(zmienionoEmail){
+              email = nowyEmail;
+            }
             const currentPassword = aktualneHaslo;
             const password = noweHaslo;
             const confirmPassword = powtorzHaslo;
-            const response = await fetch(`http://localhost:8080/reset-password?email=${encodeURIComponent(emailZapisany)}`, {
+            const response = await fetch(`http://localhost:8080/reset-password?email=${encodeURIComponent(email)}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -219,13 +225,15 @@ to powinno działać tak że jak wcisnę anuluj powraca do poprzedniej wersji wi
               setBlad(errorText);
               return;
             }
+
+            
           }
         catch (err) {
           return;
         }
     }
 
-    
+    router.push("/profile");
   };
 
   return (
