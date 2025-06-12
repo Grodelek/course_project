@@ -21,6 +21,9 @@ public class Roadmap {
   @Column(name = "name", nullable = false, unique = true)
   private String name;
 
+  @Column(name = "rating")
+  private int rating;
+
   @OneToMany(mappedBy = "roadmap", fetch = FetchType.LAZY)
   private List<Course> courseList;
 
@@ -45,6 +48,14 @@ public class Roadmap {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
   }
 
   public List<Course> getCourseList() {

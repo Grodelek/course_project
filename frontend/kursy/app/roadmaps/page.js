@@ -92,13 +92,10 @@ export default function Roadmaps() {
                   <td className="px-6 py-4 whitespace-nowrap">{roadmap.courseList.length}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {(() => {
-                      const totalRating = roadmap.courseList.reduce((sum, course) => sum + (course.rating || 0), 0);
-                      const avgRating = roadmap.courseList.length > 0 ? totalRating / roadmap.courseList.length : 0;
-                      const roundedRating = Math.round(avgRating);
                       return Array.from({ length: 5 }).map((_, i) => (
                         <span
                           key={i}
-                          className={i < roundedRating ? "text-yellow-400" : "text-gray-400"}
+                          className={i < roadmap.rating ? "text-yellow-400" : "text-gray-400"}
                         >
                           &#9733;
                         </span>

@@ -2,7 +2,10 @@ package com.project.course.services;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+
+import com.project.course.models.Comment;
+import com.project.course.repositories.CommentRepository;
+import com.project.course.repositories.RoadmapRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,10 +23,14 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 public class CourseService {
   private final CourseRepository courseRepository;
   private final LessonRepository lessonRepository;
+  private final CommentRepository commentRepository;
+  private final RoadmapService roadmapService;
 
-  public CourseService(CourseRepository courseRepository, LessonRepository lessonRepository) {
+  public CourseService(CourseRepository courseRepository, LessonRepository lessonRepository, CommentRepository commentRepository, RoadmapService roadmapService) {
     this.courseRepository = courseRepository;
     this.lessonRepository = lessonRepository;
+    this.commentRepository = commentRepository;
+    this.roadmapService = roadmapService;
   }
 
   public List<Course> getCourses() {
@@ -89,5 +96,23 @@ public class CourseService {
 
   public List<Lesson> findLessonsById(Long id) {
     return lessonRepository.findByCourseId(id);
+  }
+
+  public void updateRating(Long id){
+      Optional<Course> courseOptional = courseRepository.findById(id);
+      if(!courseOptional.isPresent()){
+        return;
+      }
+      Course course = courseOptional.get();
+      List<Comment> comments = commentRepository.findByCourseId(id);
+      int rating = 0;
+      for(Comment comment : comments){
+        rating += comment.getRating();
+      }
+      rating = rating / comments.size();
+
+      course.setRating(rating);
+      courseRepository.save(course);
+      roadmapService.updateRating(course.getRoadmap().getId());
   }
 }

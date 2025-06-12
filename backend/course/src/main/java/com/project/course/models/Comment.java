@@ -22,6 +22,16 @@ public class Comment {
     private User user;
     @Column(name = "create_date")
     private Date create_date;
+    @Column(name = "rating")
+    private int rating;
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
 
     public Date getCreate_date() {
         return create_date;

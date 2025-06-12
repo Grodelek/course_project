@@ -11,6 +11,7 @@ public class CommentDTO {
     private String contents;
     private Long course_id;
     private String user_email;
+    private int rating;
 
     public String getContents() {
         return contents;
@@ -36,4 +37,11 @@ public class CommentDTO {
         this.user_email = user_email;
     }
 
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
 }

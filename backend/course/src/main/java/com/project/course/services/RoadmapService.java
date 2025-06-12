@@ -1,6 +1,9 @@
 package com.project.course.services;
 
 import java.util.List;
+import java.util.Optional;
+
+import com.project.course.models.Comment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.project.course.dto.RoadmapDTO;
@@ -40,5 +43,22 @@ public class RoadmapService {
     roadmap.setCourseList(courseList);
     roadmapRepository.save(roadmap);
     return ResponseEntity.ok("Roadmap added successfully");
+  }
+
+  public void updateRating(Long id){
+    Optional<Roadmap> roadmapOptional = roadmapRepository.findById(id);
+    if(!roadmapOptional.isPresent()){
+      return;
+    }
+    Roadmap roadmap = roadmapOptional.get();
+    List<Course> courses = roadmap.getCourseList();
+    int rating = 0;
+    for(Course course : courses){
+      rating += course.getRating();
+    }
+    rating = rating / courses.size();
+
+    roadmap.setRating(rating);
+    roadmapRepository.save(roadmap);
   }
 }

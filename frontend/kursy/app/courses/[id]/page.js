@@ -19,6 +19,8 @@ export default function CourseDetails({ params }) {
   const [email, setEmail] = useState(typeof window !== "undefined" ? localStorage.getItem("email") || "" : "");
   const [courseId, setCourseId] = useState(resolvedParams.id);
   const [isEditing, setIsEditing] = useState(false);
+  const [rating, setRating] = useState(1);
+  const [hoverRating, setHoverRating] = useState(0);
   useEffect(() => {
     async function fetchData() {
       setError(""); 
@@ -110,6 +112,7 @@ export default function CourseDetails({ params }) {
     if (user_com) {
       setIsEditing(true);
       setContents(user_com.contents);
+      setRating(user_com.rating);
     }
   }, [comments, email]);
 
@@ -134,7 +137,7 @@ export default function CourseDetails({ params }) {
           headers: {
               "Content-Type": "application/json",
           },
-          body: JSON.stringify({ contents, course_id, user_email }),
+          body: JSON.stringify({ contents, course_id, user_email, rating }),
       });
 
       if (!response.ok) {
@@ -246,6 +249,32 @@ export default function CourseDetails({ params }) {
                 <label htmlFor="contents" className="block font-semibold mb-2">
                   {isEditing ? 'Edytuj komentarz:' : 'Skomentuj:'}
                 </label>
+                <div className="flex space-x-1 mb-2">
+                  {Array.from({ length: 5 }).map((_, index) => {
+                    const starIndex = index + 1;
+                    const isActive = hoverRating >= starIndex || (!hoverRating && rating >= starIndex);
+
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => setRating(starIndex)}
+                        onMouseEnter={() => setHoverRating(starIndex)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        className={`
+                          text-2xl
+                          ${isActive ? 'text-yellow-400' : 'text-gray-400'}
+                          hover:text-yellow-300
+                          transition-colors duration-200
+                        `}
+                      >
+                        ★
+                      </button>
+                    );
+                  })}
+                </div>
+
+
                 <textarea
                   id="contents"
                   value={contents}
@@ -280,6 +309,14 @@ export default function CourseDetails({ params }) {
                             hour: '2-digit',
                             minute: '2-digit'
                           })}
+                          <br />
+                          <span className="flex items-center space-x-1 mt-1">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <span key={i} className={i < comment.rating ? "text-yellow-400" : "text-gray-500"}>
+                                ★
+                              </span>
+                            ))}
+                          </span>
                         </span>
                       </p>
                       <p className="font-semibold">{comment.contents}</p>

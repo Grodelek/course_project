@@ -24,11 +24,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final CourseService courseService;
 
-    public CommentService(CommentRepository commentRepository, UserRepository userRepository, CourseRepository courseRepository) {
+    public CommentService(CommentRepository commentRepository, UserRepository userRepository, CourseRepository courseRepository, CourseService courseService) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
+        this.courseService = courseService;
     }
 
     public List<Comment> GetCommentsByCourseId(Long courseId){
@@ -56,22 +58,29 @@ public class CommentService {
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with ID " + commentDTO.getUser_email());
         }
+        if (commentDTO.getRating() < 1){
+            commentDTO.setRating(1);
+        }
         Course course = courseOpt.get();
         comment.setCourse(course);
         User user = userOpt.get();
         comment.setUser(user);
         comment.setCreate_date(new Date());
+        comment.setRating(commentDTO.getRating());
         Optional<Comment> existingCommentOpt = commentRepository.findByUserIdAndCourseId(user.getId(), course.getId());
 
         if (existingCommentOpt.isPresent()){
             comment = existingCommentOpt.get();
             comment.setContents(commentDTO.getContents());
             comment.setCreate_date(new Date());
+            comment.setRating(commentDTO.getRating());
             commentRepository.save(comment);
+            courseService.updateRating(course.getId());
             return ResponseEntity.status(HttpStatus.OK).body("Comment updated!");
         }
         else{
             commentRepository.save(comment);
+            courseService.updateRating(course.getId());
             return ResponseEntity.status(HttpStatus.OK).body("Comment added!");
         }
 
