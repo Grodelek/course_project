@@ -10,6 +10,7 @@ export default function StronaProfilu() {
   const [imie, setImie] = useState("");
   const [email, setEmail] = useState("");
   const [sciezkaZdjecia, setSciezkaZdjecia] = useState("");
+  const [courses, setCourses] = useState([]);
 
   const [aktualneKursy, setAktualneKursy] = useState([
     { id: 1, tytul: "Wprowadzenie do HTML", postep: 40 },
@@ -32,6 +33,8 @@ export default function StronaProfilu() {
     setSciezkaZdjecia(localStorage.getItem("photoPath") || "");
   }, [router]);
 
+  
+
   const wyloguj = () => {
     localStorage.clear();
     router.replace("/");
@@ -41,6 +44,8 @@ export default function StronaProfilu() {
   const urlZdjecia = sciezkaZdjecia
     ? `https://courseapp-bucket.s3.eu-north-1.amazonaws.com/${sciezkaZdjecia}`
     : null;
+
+
 
   return (
     <Brama>
