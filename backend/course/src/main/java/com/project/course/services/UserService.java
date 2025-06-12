@@ -10,10 +10,7 @@ import com.project.course.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -41,15 +38,18 @@ public class UserService {
   private final EmailSenderService emailSenderService;
   private final BanRepository banRepository;
   private final LessonRepository lessonRepository;
+  private final CourseService courseService;
 
   public UserService(UserRepository userRepository,
-      PasswordEncoder passwordEncoder,
-      AuthenticationManager authenticationManager,
-      JWTService jwtService,
-      UserVerificationCodeService userVerificationCodeService,
-      EmailSenderService emailSenderService,
-      BanRepository banRepository,
-      LessonRepository lessonRepository) {
+                     PasswordEncoder passwordEncoder,
+                     AuthenticationManager authenticationManager,
+                     JWTService jwtService,
+                     UserVerificationCodeService userVerificationCodeService,
+                     EmailSenderService emailSenderService,
+                     BanRepository banRepository,
+                     LessonRepository lessonRepository,
+                     CourseService courseService,
+                     CourseRepository courseRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
@@ -58,6 +58,8 @@ public class UserService {
     this.emailSenderService = emailSenderService;
     this.banRepository = banRepository;
     this.lessonRepository = lessonRepository;
+    this.courseService = courseService;
+    this.courseRepository = courseRepository;
   }
 
   @Autowired
@@ -296,5 +298,33 @@ public class UserService {
     user.setEmail(changeEmailDTO.getNewEmail());
 
     return ResponseEntity.ok().body("Email changed successfully");
+  }
+
+  public Dictionary<Course, Integer> getCoursesPretenge(String email){
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    Dictionary<Course, Integer> response = null;
+    if(!userOptional.isPresent()){
+      return null;
+    }
+    User user = userOptional.get();
+    List<Course> courses = courseService.getCourses();
+    List<Long> finishedLessons = getFinishedLessonsIdsByEmail(email);
+
+    for(Course course : courses){
+      int finished = 0;
+      int all = 0;
+      for(Lesson lesson : course.getLessons()){
+        all++;
+        if(finishedLessons.contains(lesson.getId())){
+          finished++;
+        }
+      }
+      response.put(course, all/finished);
+    }
+    return response;
+  }
+
+  public List<User> findAllUsers(){
+    return userRepository.findAll();
   }
 }

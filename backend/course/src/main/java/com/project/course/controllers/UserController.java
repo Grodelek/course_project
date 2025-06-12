@@ -1,6 +1,7 @@
 package com.project.course.controllers;
 
 import com.project.course.dto.*;
+import com.project.course.models.Course;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,10 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import com.project.course.models.User;
 import com.project.course.services.UserService;
 import jakarta.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -107,5 +106,15 @@ public class UserController {
   public ResponseEntity<?> changeEmail(@Valid @RequestBody ChangeEmailDTO changeEmailDTO,
                                           @RequestParam String email) {
     return userService.changeEmail(changeEmailDTO, email);
+  }
+
+  @PostMapping("/coursesPretenge")
+  public Dictionary<Course, Integer> getCoursePretenge(@RequestParam String email){
+    return userService.getCoursesPretenge(email);
+  }
+
+  @GetMapping("/allUsers")
+  public List<User> getAllUsers (){
+    return userService.findAllUsers();
   }
 }

@@ -23,4 +23,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query("SELECT l.id FROM User u JOIN u.finishedLessonsList l WHERE u.email = :email")
   List<Long> findFinishedLessonsIdsByUserEmail(@Param("email") String email);
+
 }

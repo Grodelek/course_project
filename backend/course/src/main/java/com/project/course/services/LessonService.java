@@ -62,4 +62,6 @@ public class LessonService {
   public Optional<Lesson> findById(Long lessonId) {
     return lessonRepository.findById(lessonId);
   }
+
+  public List<Lesson> getAllLessons() { return lessonRepository.findAll(); }
 }
