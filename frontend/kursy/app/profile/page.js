@@ -11,16 +11,13 @@ export default function StronaProfilu() {
   const [email, setEmail] = useState("");
   const [sciezkaZdjecia, setSciezkaZdjecia] = useState("");
   const [courses, setCourses] = useState([]);
-
-  const [aktualneKursy, setAktualneKursy] = useState([
-    { id: 1, tytul: "Wprowadzenie do HTML", postep: 40 },
-    { id: 2, tytul: "Podstawy CSS", postep: 75 },
-  ]);
+  const [finishedCourses, setFinishedCourses] = useState([]);
+  const [aktualneKursy, setAktualneKursy] = useState([]);
   const [ukonczoneKursy, setUkonczoneKursy] = useState([
     { id: 3, tytul: "JavaScript od podstaw", zakonczono: "2025-05-10" },
     { id: 4, tytul: "Responsywność strony", zakonczono: "2025-04-28" },
   ]);
-
+  const [error, setError] = useState("");
   useEffect(() => {
     const token = localStorage.getItem("token");
     const zapamietanyEmail = localStorage.getItem("email");
@@ -32,8 +29,66 @@ export default function StronaProfilu() {
     setImie(localStorage.getItem("userName") || "");
     setSciezkaZdjecia(localStorage.getItem("photoPath") || "");
   }, [router]);
+useEffect(() => {
+    if (!email) return;
+    async function fetchData(){
+      setError("");
+      try {
 
-  
+          const response = await fetch(`http://localhost:8080/coursesPercentage?email=${encodeURIComponent(email)}`, {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          });
+
+          if (!response.ok) {
+              throw new Error(`Błąd `);
+          }
+          const data = await response.json();
+          setAktualneKursy(data);
+
+          const response2 = await fetch(`http://localhost:8080/${email}/finished-course-ids`, {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          });
+
+          if (!response2.ok) {
+              throw new Error(`Błąd `);
+          }
+          const data2 = await response2.json();
+          setFinishedCourses(data2);
+
+          const response3 = await fetch(`http://localhost:8080/course/all`, {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          });
+
+          if (!response3.ok) {
+              throw new Error(`Błąd `);
+          }
+          const data3 = await response3.json();
+          setCourses(data3);
+          } catch (err) {
+          setError(err.message);
+      }
+    }
+    fetchData();
+          }, [email]);
+
+    useEffect(() => {
+      if (!courses || courses.length === 0) return;
+
+      const zakonczone = courses.filter(course =>
+        finishedCourses.includes(course.id)
+      );
+
+      setUkonczoneKursy(zakonczone);
+    }, [courses]);
 
   const wyloguj = () => {
     localStorage.clear();
@@ -114,16 +169,16 @@ export default function StronaProfilu() {
             <h2 className="text-2xl font-semibold mb-4">Aktualne kursy</h2>
             <div className="space-y-4">
               {aktualneKursy.map((kurs) => (
-                <Link key={kurs.id} href={`/courses/${kurs.id}`}>
+                <Link key={kurs.courseId} href={`/courses/${kurs.courseId}`}>
                   <div className="group bg-white/10 hover:bg-white/20 rounded-lg p-4 flex items-center justify-between transition">
-                    <div className="w-60">{kurs.tytul}</div>
+                    <div className="w-60">{kurs.courseName}</div>
                     <div className="w-32 h-3 bg-gray-600 rounded-full overflow-hidden">
                       <div
                         className="bg-green-500 h-full transition-width"
-                        style={{ width: `${kurs.postep}%` }}
+                        style={{ width: `${kurs.progress}%` }}
                       />
                     </div>
-                    <span className="text-sm text-gray-200">{kurs.postep}%</span>
+                    <span className="text-sm text-gray-200">{kurs.progress}%</span>
                   </div>
                 </Link>
               ))}
@@ -132,14 +187,13 @@ export default function StronaProfilu() {
           </div>
 
           <div className="mx-auto max-w-2xl bg-white/20 backdrop-blur-sm rounded-xl shadow-xl border border-white/30 p-6 text-white">
-            <h2 className="text-2xl font-semibold mb-4">Historia kursów</h2>
+            <h2 className="text-2xl font-semibold mb-4">Ukończone kursy</h2>
             <ul className="space-y-3">
               {ukonczoneKursy.map((kurs) => (
                 <li key={kurs.id} className="flex justify-between items-center">
                   <Link href={`/courses/${kurs.id}`}>
-                    <span className="hover:underline">{kurs.tytul}</span>
+                    <span className="hover:underline">{kurs.name}</span>
                   </Link>
-                  <span className="text-sm text-gray-200">{kurs.zakonczono}</span>
                 </li>
               ))}
               {ukonczoneKursy.length === 0 && <p>Brak ukończonych kursów.</p>}

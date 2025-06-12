@@ -108,9 +108,9 @@ public class UserController {
     return userService.changeEmail(changeEmailDTO, email);
   }
 
-  @PostMapping("/coursesPretenge")
-  public Dictionary<Course, Integer> getCoursePretenge(@RequestParam String email){
-    return userService.getCoursesPretenge(email);
+  @GetMapping("/coursesPercentage")
+  public List<CourseProgressDTO> getCoursePercentage(@RequestParam String email){
+    return userService.getCoursesPercentage(email);
   }
 
   @GetMapping("/allUsers")
