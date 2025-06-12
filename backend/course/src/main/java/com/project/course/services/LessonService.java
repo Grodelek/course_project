@@ -44,9 +44,9 @@ public class LessonService {
     Course course = courseOpt.get();
     lesson.setCourse(course);
     course.getLessons().add(lesson);
-    lessonRepository.save(lesson);
+    Lesson lessonSaved = lessonRepository.save(lesson);
     courseRepository.save(course);
-    return ResponseEntity.status(HttpStatus.OK).body("Lesson added to course " + id);
+    return ResponseEntity.status(HttpStatus.OK).body(lessonSaved.getId());
   }
 
   public ResponseEntity<?> deleteLesson(@PathVariable Long courseId, @PathVariable Long lessonId) {

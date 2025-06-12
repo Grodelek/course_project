@@ -1,16 +1,16 @@
 package com.project.course.controllers;
 
+import com.project.course.dto.SectorDTO;
 import com.project.course.services.SectorService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/sector")
 public class SectorController {
-  private SectorService sectorService;
+  private final SectorService sectorService;
 
   public SectorController(SectorService sectorService) {
     this.sectorService = sectorService;
@@ -20,4 +20,7 @@ public class SectorController {
   public List<?> getSectorsByLessonId(@PathVariable Long lessonId) {
     return sectorService.findLessonsById(lessonId);
   }
+
+  @PostMapping("/add")
+  public ResponseEntity<?> addSector(@RequestBody SectorDTO sectorDTO) {return sectorService.addSector(sectorDTO);}
 }

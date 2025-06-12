@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Brama from "@/app/components/auth/Brama";
 import {
   FaArrowUp,
@@ -12,15 +12,99 @@ import {
 } from "react-icons/fa";
 
 const pusteBloki = {
-  tekst:  { typ: "tekst",  wartosc: "" },
-  obraz:  { typ: "obraz",  wartosc: "", alt: "" },
-  wideo:  { typ: "wideo",  wartosc: "" },
+  text:  { typ: "text",  wartosc: "" },
+  image:  { typ: "image",  wartosc: "", alt: "" },
+  video:  { typ: "video",  wartosc: "" },
 };
 
 export default function KreatorLekcji() {
   const [bloki, setBloki] = useState([]);
   const [podglad, setPodglad] = useState(false);
   const [blad, setBlad] = useState("");
+  const [error, setError] = useState("");
+  const [courses, setCourses] = useState([]);
+  const [nazwaLekcji, setNazwaLekcji] = useState("");
+  const [dlugosc, setDlugosc] = useState("");
+  const [kurs, setKurs] = useState(0);
+
+  useEffect(() => {
+      async function fetchData(){
+        setError("");
+        try {
+  
+            const response = await fetch("http://localhost:8080/course/all", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+  
+            if (!response.ok) {
+                throw new Error(`Błąd `);
+            }
+            const data = await response.json();
+            setCourses(data);
+  
+        } catch (err) {
+            setError(err.message);
+        }
+      }
+      fetchData();
+            }, []);
+
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError("");
+      try {
+              const name = nazwaLekcji;
+              const description = dlugosc;
+              const courseId = kurs;
+              const response = await fetch(`http://localhost:8080/lesson/add?courseId=${courseId}`, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ name, description }),
+              });
+  
+              if (!response.ok) {
+                  const errorText = await response.text();
+                  throw new Error(`Błąd ${response.status}: ${errorText}`);
+              }
+
+              const text = await response.text();
+              const lessonId = parseInt(text, 10);
+              let i = 0;
+              bloki.forEach(async blok => {
+                i++;
+                try {
+                  const type = blok.typ;
+                  const value = blok.wartosc;
+                  const alternative = blok.alt;
+                  const place = i;
+                  const response1 = await fetch(`http://localhost:8080/sector/add`, {
+                      method: "POST",
+                      headers: {
+                          "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({ type, value, alternative, place, lessonId }),
+                  });
+      
+                  if (!response1.ok) {
+                      const errorText = await response1.text();
+                      throw new Error(`Błąd ${response1.status}: ${errorText}`);
+                  }
+
+                } catch (err) {
+                  setError(err.message);
+                }
+                
+              });
+  
+          } catch (err) {
+              setError(err.message);
+          }
+    };
 
   /* ---------- OPERACJE NA BLOKACH ---------- */
   const dodajBlok = (rodzaj) =>
@@ -46,12 +130,24 @@ export default function KreatorLekcji() {
   const otworzPodglad = () => {
     const pusty = bloki.find(
       (b) =>
-        (b.typ === "tekst" && !b.wartosc.trim()) ||
-        (b.typ === "obraz" && !b.wartosc.trim()) ||
-        (b.typ === "wideo" && !b.wartosc.trim())
+        (b.typ === "text" && !b.wartosc.trim()) ||
+        (b.typ === "image" && !b.wartosc.trim()) ||
+        (b.typ === "video" && !b.wartosc.trim())
     );
     if (pusty) {
       setBlad("Uzupełnij treść wszystkich bloków przed podglądem.");
+      return;
+    }
+    if (nazwaLekcji==""){
+      setBlad("Uzupełnij nazwę lekcji przed podglądem.");
+      return;
+    }
+    if (kurs == 0){
+      setBlad("Wybierz kurs przed podglądem.");
+      return;
+    }
+    if (dlugosc == ""){
+      setBlad("Podaj długość lekcji przed podglądem.");
       return;
     }
     setBlad("");
@@ -79,7 +175,7 @@ export default function KreatorLekcji() {
         </div>
       </div>
 
-      {blok.typ === "tekst" && (
+      {blok.typ === "text" && (
         <textarea
           value={blok.wartosc}
           onChange={(e) => aktualizuj(idx, "wartosc", e.target.value)}
@@ -88,7 +184,7 @@ export default function KreatorLekcji() {
         />
       )}
 
-      {blok.typ === "obraz" && (
+      {blok.typ === "image" && (
         <>
           <input
             type="text"
@@ -107,7 +203,7 @@ export default function KreatorLekcji() {
         </>
       )}
 
-      {blok.typ === "wideo" && (
+      {blok.typ === "video" && (
         <input
           type="text"
           placeholder="Embed URL (YouTube, Vimeo...)"
@@ -119,16 +215,28 @@ export default function KreatorLekcji() {
     </div>
   );
 
+  const renderujPodglad = () => {
+    return (
+    <div>
+      <h1 className="text-4xl font-bold">{nazwaLekcji}</h1>
+      <h2 className="text-2xl font-bold">Kurs: {courses.find(course => course.id == kurs)?.name || "Nieznany kurs"}</h2>
+      <h3 className="text-1m font-bold">Długość: {dlugosc}</h3>
+    </div>
+    )
+    
+    
+  }
+
   /* ---------- RENDER BLOKU (PODGLĄD) ---------- */
-  const renderujPodglad = (blok, idx) => {
+  const renderujPodgladBloki = (blok, idx) => {
     switch (blok.typ) {
-      case "tekst":
+      case "text":
         return (
           <p key={idx} className="my-4 whitespace-pre-line">
             {blok.wartosc}
           </p>
         );
-      case "obraz":
+      case "image":
         return (
           <img
             key={idx}
@@ -137,7 +245,7 @@ export default function KreatorLekcji() {
             className="my-6 rounded-lg mx-auto"
           />
         );
-      case "wideo":
+      case "video":
         return (
           <div key={idx} className="my-6 aspect-video">
             <iframe
@@ -162,28 +270,52 @@ export default function KreatorLekcji() {
         <div className="relative z-10 container mx-auto px-4 text-white max-w-4xl space-y-6">
           <h1 className="text-4xl font-bold">Kreator lekcji</h1>
           <h1 className="text-1xl font-bold">Wybierz kurs</h1>
-          <select className="block w-full max-w-xs bg-white/20 backdrop-blur-sm text-black border border-white/30 rounded-lg px-4 py-2 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-green-500" name="kursy" id="kursy">
-          </select>
+          
           {!podglad && (
             <>
+              <select className="text-white block w-full max-w-xs bg-white/20 backdrop-blur-sm text-black border border-white/30 rounded-lg px-4 py-2 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-green-500" name="kursy" id="kursy"
+                onChange={(e) => setKurs(e.target.value)}
+                value={kurs}
+              >
+                <option value="0" disabled hidden className="text-gray">--- Wybierz kurs ---</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id} className="text-black">{course.name}</option>
+                ))}
+              </select>
+              <h1 className="text-1xl font-bold">Nazwa lekcji</h1>
+              <input
+                type="text"
+                placeholder="Nazwa"
+                value={nazwaLekcji}
+                onChange={(e) => setNazwaLekcji(e.target.value)}
+                className="w-full bg-white/20 p-2 rounded text-black"
+              />
+              <h1 className="text-1xl font-bold">Długość</h1>
+              <input
+                type="text"
+                placeholder="Długość (np. 1h15m)"
+                value={dlugosc}
+                onChange={(e) => setDlugosc(e.target.value)}
+                className="w-full bg-white/20 p-2 rounded text-black"
+              />
               {/* PRZYCISKI DODAWANIA */}
               <div className="flex gap-4">
                 <button
-                  onClick={() => dodajBlok("tekst")}
+                  onClick={() => dodajBlok("text")}
                   className="flex items-center gap-2 bg-white/20 px-3 py-2 rounded"
                 >
                   <FaPlus />
                   Tekst
                 </button>
                 <button
-                  onClick={() => dodajBlok("obraz")}
+                  onClick={() => dodajBlok("image")}
                   className="flex items-center gap-2 bg-white/20 px-3 py-2 rounded"
                 >
                   <FaPlus />
                   Obraz
                 </button>
                 <button
-                  onClick={() => dodajBlok("wideo")}
+                  onClick={() => dodajBlok("video")}
                   className="flex items-center gap-2 bg-white/20 px-3 py-2 rounded"
                 >
                   <FaPlus />
@@ -208,7 +340,8 @@ export default function KreatorLekcji() {
           {podglad && (
             <>
               <article className="prose prose-invert max-w-none">
-                {bloki.map(renderujPodglad)}
+                {renderujPodglad()}
+                {bloki.map(renderujPodgladBloki)}
               </article>
 
               <div className="flex gap-4 mt-8">
@@ -221,8 +354,8 @@ export default function KreatorLekcji() {
                 </button>
 
                 <button
-                  disabled
-                  className="bg-blue-500 opacity-60 px-6 py-3 rounded font-semibold inline-flex items-center gap-2 cursor-not-allowed"
+                  className="bg-blue-500 px-6 py-3 rounded font-semibold inline-flex items-center gap-2"
+                  onClick={handleSubmit}
                 >
                   Wyślij do bazy (wkrótce)
                 </button>
