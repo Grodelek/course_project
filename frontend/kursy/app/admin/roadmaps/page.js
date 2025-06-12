@@ -90,6 +90,7 @@ export default function Roadmaps() {
                   <td className="px-6 py-4 whitespace-nowrap">{roadmap.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{roadmap.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{roadmap.courseList.length}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex gap-2">
                     <button
                       onClick={() => edytujKurs(roadmap.id)}
@@ -105,11 +106,12 @@ export default function Roadmaps() {
                       <FaTrash /> Usuń
                     </button>
                   </div>
+                  </td>
                 </tr>
               ))}
               {currentData.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center">
+                  <td colSpan={4} className="px-6 py-4 text-center">
                     Brak kursów do wyświetlenia.
                   </td>
                 </tr>

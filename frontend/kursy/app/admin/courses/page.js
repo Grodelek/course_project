@@ -114,7 +114,7 @@ export default function Courses() {
               ))}
               {currentData.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center">
+                  <td colSpan={4} className="px-6 py-4 text-center">
                     Brak kursów do wyświetlenia.
                   </td>
                 </tr>

@@ -93,6 +93,7 @@ export default function Users() {
                   <td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.username}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex gap-2">
                     {user.banned ? (
                       <button
@@ -117,11 +118,12 @@ export default function Users() {
                       <FaTrash /> Usuń
                     </button>
                   </div>
+                  </td>
                 </tr>
               ))}
               {currentData.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center">
+                  <td colSpan={4} className="px-6 py-4 text-center">
                     Brak kursów do wyświetlenia.
                   </td>
                 </tr>
