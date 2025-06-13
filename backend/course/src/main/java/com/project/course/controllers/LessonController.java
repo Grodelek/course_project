@@ -30,4 +30,7 @@ public class LessonController {
     public ResponseEntity<?> addLesson(@Valid @RequestBody LessonDTO lessonDTO, @RequestParam Long courseId){
         return lessonService.addLessonToCourse(lessonDTO, courseId);
     }
+
+    @GetMapping("/getWithoutQuiz")
+    public List<Lesson> getWithoutQuiz() {return lessonService.getWithoutQuiz();}
 }

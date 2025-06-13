@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Brama from "@/app/components/auth/Brama";
 import {
   FaPlus,
@@ -24,6 +24,34 @@ export default function KreatorQuizu() {
   const [pytania, setPytania]     = useState([]);
   const [podgląd, setPodgląd]     = useState(false);
   const [błąd, setBłąd]           = useState("");
+  const [lessons, setLessons] = useState([]);
+  const [lesson, setLesson] = useState(0);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+        async function fetchData(){
+          setError("");
+          try {
+    
+              const response = await fetch("http://localhost:8080/lesson/getWithoutQuiz", {
+                  method: "GET",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+              });
+    
+              if (!response.ok) {
+                  throw new Error(`Błąd `);
+              }
+              const data = await response.json();
+              setLessons(data);
+    
+          } catch (err) {
+              setError(err.message);
+          }
+        }
+        fetchData();
+              }, []);
 
   const dodajPytanie = () => setPytania([...pytania, pustePytanie()]);
 
@@ -50,6 +78,10 @@ export default function KreatorQuizu() {
     );
     if (niepoprawne) {
       setBłąd("Każde pytanie i odpowiedź musi być uzupełnione; zaznacz co najmniej jedną odpowiedź jako poprawną.");
+      return;
+    }
+    if (lesson<1) {
+      setBłąd("Wybierz lekcję.");
       return;
     }
     setBłąd("");
@@ -157,11 +189,19 @@ export default function KreatorQuizu() {
         <div className="relative z-10 container mx-auto px-4 text-white max-w-4xl space-y-6">
 
           <h1 className="text-4xl font-bold">Kreator quizu</h1>
-          <h1 className="text-1xl font-bold">Wybierz lekcje</h1>
-          <select className="block w-full max-w-xs bg-white/20 backdrop-blur-sm text-black border border-white/30 rounded-lg px-4 py-2 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-green-500" name="kursy" id="kursy">
-          </select>
+          
           {!podgląd && (
             <>
+            <h1 className="text-1xl font-bold">Wybierz lekcje</h1>
+            <select className="text-white block w-full max-w-xs bg-white/20 backdrop-blur-sm text-black border border-white/30 rounded-lg px-4 py-2 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-green-500" name="kursy" id="kursy"
+                onChange={(e) => setLesson(e.target.value)}
+                value={lesson}
+              >
+                <option value="0" disabled hidden className="text-gray">--- Wybierz Lekcje ---</option>
+                {lessons.map((lessonMaped) => (
+                  <option key={lessonMaped.id} value={lessonMaped.id} className="text-black">{lessonMaped.name}</option>
+                ))}
+              </select>
               <button
                 onClick={dodajPytanie}
                 className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded"
@@ -184,6 +224,9 @@ export default function KreatorQuizu() {
 
           {podgląd && (
             <>
+              <div>
+                <h2 className="text-2xl font-bold">Lekcja: {lessons.find(lessonFind => lessonFind.id == lesson)?.name || "Nieznana Lekcja"}</h2>
+              </div>
               {pytania.map(renderujPodgląd)}
 
               <div className="flex gap-4 mt-8">

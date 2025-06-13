@@ -1,5 +1,6 @@
 package com.project.course.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,4 +65,15 @@ public class LessonService {
   }
 
   public List<Lesson> getAllLessons() { return lessonRepository.findAll(); }
+
+  public List<Lesson> getWithoutQuiz(){
+    List<Lesson> allLessons = lessonRepository.findAll();
+    List<Lesson> withoutQuiz = new ArrayList<>();
+    for(Lesson lesson : allLessons){
+      if(lesson.getQuestions().isEmpty()){
+        withoutQuiz.add(lesson);
+      }
+    }
+    return withoutQuiz;
+  }
 }
