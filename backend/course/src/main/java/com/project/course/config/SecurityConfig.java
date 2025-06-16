@@ -53,9 +53,9 @@ public class SecurityConfig {
             .requestMatchers("/", "/oauth2/reset-password", "/api/s3/upload", "/register", "/login", "/authenticate",
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
-                "/swagger-ui.html", "/ban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids",
+                "/swagger-ui.html", "/ban", "/unban", "/course/all", "/user/username", "/roadmap/all", "/*/finished-course-ids",
                 "/course/*/lessons", "/*/finished-lessons-ids", "/course/*", "/sector/*", "/question/*",
-                "/question/lesson/*",
+                "/question/lesson/*", "user/delete/*",
                 "/*/finished-lessons/*", "/comment/*", "/reset-password", "/change-username", "/change-email",
                     "/coursesPercentage", "/allUsers", "/lesson/all", "/sector/add", "/lesson/add", "/lesson/getWithoutQuiz",
                 "/answer/add", "question/add")

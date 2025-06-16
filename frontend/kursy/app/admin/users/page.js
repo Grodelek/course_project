@@ -8,6 +8,11 @@ export default function Users() {
   //const [coursesData, setCoursesData] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const [error, setError] = useState("");
+  const [banModalOpen, setBanModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [banEndDate, setBanEndDate] = useState("");
+  const [selectedUserEmail, setSelectedUserEmail] = useState("");
+  const [banReason, setBanReason] = useState("");
   useEffect(() => {
     async function fetchData(){
       setError("");
@@ -50,11 +55,62 @@ export default function Users() {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
   // Dla Andrzeja
-  const zbanujKonto = async (id) => {
+  const zbanujKonto = async (userEmail, endDate, reason) => {
+    try {
+      const response = await fetch(`http://localhost:8080/ban?email=${encodeURIComponent(userEmail)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ dateEnd: endDate, reason}),
+      });
+
+      if (!response.ok) throw new Error("Błąd przy banowaniu.");
+
+      const refreshed = await fetch("http://localhost:8080/allUsers");
+      const data = await refreshed.json();
+      setUsersData(data);
+    } catch (err) {
+      setError(err.message);
+    }
   };
-  const odbanujKonto = async (id) => {
-  };
-  const usuńKurs = async (id) => {
+
+  const odbanujKonto = async (userEmail) => {
+  try {
+    const response = await fetch(`http://localhost:8080/unban?email=${encodeURIComponent(userEmail)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) throw new Error("Błąd przy odbanowywaniu.");
+
+    const refreshed = await fetch("http://localhost:8080/allUsers");
+    const data = await refreshed.json();
+    setUsersData(data);
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
+  const usunKonto = async (id) => {
+    try{
+      const response = await fetch(`http://localhost:8080/user/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Błąd przy usuwaniu.");
+
+      const refreshed = await fetch("http://localhost:8080/allUsers");
+      const data = await refreshed.json();
+      setUsersData(data);
+    } catch (err) {
+      setError(err.message);
+    }
   };
   return (
     <Brama>
@@ -95,16 +151,20 @@ export default function Users() {
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex gap-2">
-                    {user.banned ? (
+                    {user.roles == "BANNED" ? (
                       <button
-                        onClick={() => odbanujKonto(user.id)}
+                        onClick={() => odbanujKonto(user.email)}
                         className="flex items-center gap-1 bg-green-600 hover:bg-green-700 px-3 py-1 rounded transition"
                       >
                         <FaUndo /> Odbanuj
                       </button>
                     ) : (
                       <button
-                        onClick={() => zbanujKonto(user.id)}
+                        onClick={() => {
+                          setSelectedUserId(user.id);
+                          setSelectedUserEmail(user.email);
+                          setBanModalOpen(true);
+                        }}
                         className="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded transition"
                       >
                         <FaBan /> Zbanuj
@@ -112,7 +172,11 @@ export default function Users() {
                     )}
 
                     <button
-                      onClick={() => usuńKurs(user.id)}
+                      onClick={() => {
+                        if (window.confirm(`Czy na pewno chcesz usunąć konto użytkownika ${user.email}?`)) {
+                          usunKonto(user.id);
+                        }
+                      }}
                       className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition"
                     >
                       <FaTrash /> Usuń
@@ -130,6 +194,62 @@ export default function Users() {
               )}
             </tbody>
           </table>
+
+          {banModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
+                <h2 className="text-xl font-bold mb-4">Zbanuj użytkownika</h2>
+
+                <p className="mb-2 text-sm text-gray-700">
+                  <strong>Adres e-mail:</strong> {selectedUserEmail}
+                </p>
+
+                <label className="block mb-1 text-sm">Data końca bana:</label>
+                <input
+                  type="date"
+                  value={banEndDate}
+                  onChange={(e) => setBanEndDate(e.target.value)}
+                  className="w-full p-2 border rounded mb-4"
+                />
+
+                <label className="block mb-1 text-sm">Powód bana:</label>
+                <textarea
+                  rows={3}
+                  value={banReason}
+                  onChange={(e) => setBanReason(e.target.value)}
+                  className="w-full p-2 border rounded mb-4"
+                  placeholder="Wprowadź powód"
+                />
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setBanModalOpen(false);
+                      setBanEndDate("");
+                      setBanReason("");
+                      setSelectedUserEmail("");
+                    }}
+                    className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    onClick={() => {
+                      zbanujKonto(selectedUserEmail, banEndDate, banReason);
+                      setBanModalOpen(false);
+                      setBanEndDate("");
+                      setBanReason("");
+                      setSelectedUserEmail("");
+                    }}
+                    className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white transition"
+                  >
+                    Zbanuj
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
 
           <div className="mt-4 flex justify-center space-x-2">
             <button
