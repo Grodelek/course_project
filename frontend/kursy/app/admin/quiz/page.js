@@ -53,6 +53,67 @@ export default function KreatorQuizu() {
         fetchData();
               }, []);
 
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError("");
+      pytania.forEach(async pytanie => {
+        try {
+              const contents = pytanie.tresc;
+              const lessonId = lesson;
+              const response = await fetch(`http://localhost:8080/question/add`, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ contents, lessonId }),
+              });
+  
+              if (!response.ok) {
+                  const errorText = await response.text();
+                  throw new Error(`Błąd ${response.status}: ${errorText}`);
+              }
+
+              const text = await response.text();
+              const questionId = parseInt(text, 10);
+              let i = 0;
+              pytanie.odpowiedzi.forEach(async odpowiedz => {
+                i++;
+                try {
+                  const contents = odpowiedz.tresc;
+                  const isCorrect = !!odpowiedz.poprawna;
+                  const response1 = await fetch(`http://localhost:8080/answer/add`, {
+                      method: "POST",
+                      headers: {
+                          "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({ contents, isCorrect: !!odpowiedz.poprawna, questionId }),
+                  });
+      
+                  if (!response1.ok) {
+                      const errorText = await response1.text();
+                      throw new Error(`Błąd ${response1.status}: ${errorText}`);
+                  }
+
+                  console.log("Wysyłana odpowiedź:", {
+                    contents,
+                    isCorrect: !!odpowiedz.poprawna,
+                    questionId
+                  });
+
+                } catch (err) {
+                  setError(err.message);
+                }
+                
+              });
+  
+          } catch (err) {
+              setError(err.message);
+          }
+      })
+      //window.location.reload();
+      
+    };
+
   const dodajPytanie = () => setPytania([...pytania, pustePytanie()]);
 
   const usuńPytanie = (idx) =>
@@ -238,8 +299,9 @@ export default function KreatorQuizu() {
                 </button>
 
                 <button
-                  disabled
-                  className="bg-blue-500 opacity-60 px-6 py-3 rounded font-semibold inline-flex items-center gap-2 cursor-not-allowed"
+
+                  className="bg-blue-500 opacity-60 px-6 py-3 rounded font-semibold inline-flex items-center gap-2"
+                  onClick={handleSubmit}
                 >
                   Wyślij do bazy (wkrótce)
                 </button>

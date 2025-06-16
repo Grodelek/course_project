@@ -1,12 +1,12 @@
 package com.project.course.controllers;
 
+import com.project.course.dto.QuestionDTO;
 import com.project.course.models.Lesson;
 import com.project.course.services.LessonService;
 import com.project.course.services.QuestionService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +30,7 @@ public class QuestionController {
   public Optional<Lesson> getLessonById(@PathVariable Long lessonId) {
     return lessonService.findById(lessonId);
   }
+
+  @PostMapping("/add")
+  public ResponseEntity<?> addLesson(@RequestBody QuestionDTO questionDTO){ return questionService.addQuestionToLesson(questionDTO);}
 }
