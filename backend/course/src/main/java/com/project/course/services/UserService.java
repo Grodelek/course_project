@@ -408,9 +408,7 @@ public class UserService {
     return userRepository.findAll();
   }
 
-  public String getEmailByToken(String token) {
-    return userRepository.findByAuthToken(token)
-        .map(User::getEmail)
-        .orElse("no Email found");
+  public Optional<User> getUserByToken(String token) {
+    return userRepository.findByAuthToken(token);
   }
 }

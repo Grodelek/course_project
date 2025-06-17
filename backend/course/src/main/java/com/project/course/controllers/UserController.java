@@ -120,12 +120,13 @@ public class UserController {
     return userService.findAllUsers();
   }
 
-  @GetMapping("/email")
-  public ResponseEntity<String> getEmailByToken(@RequestParam String token) {
-    String email = userService.getEmailByToken(token);
-    if (email.equals("no Email found")) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for provided token");
+  @GetMapping("/userByToken")
+  public User getUserByToken(@RequestParam String token) {
+    Optional<User> userOptional = userService.getUserByToken(token);
+    if (!userOptional.isPresent()) {
+      return null;
     }
-    return ResponseEntity.ok(email);
+    User user = userOptional.get();
+    return user;
   }
 }

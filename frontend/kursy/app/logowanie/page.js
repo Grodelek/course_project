@@ -3,9 +3,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import Error from "../components/ui/Error.js";
+import { useUser } from "../components/auth/UserContext";
 
 
 export default function Logowanie() {
+  const { setUserData } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
@@ -15,75 +17,97 @@ export default function Logowanie() {
   const [invalidFields, setInvalidFields] = useState([]);
   //wysłanie formularza
   const handleSubmit = async (e) => {
-    e.preventDefault();
-        setErrorTop("");
-        setInvalidFields([]);
+  e.preventDefault();
+  setErrorTop("");
+  setInvalidFields([]);
 
-        const missing = [];
-        if (!email.trim())    missing.push("email");
-        if (!password.trim()) missing.push("password");
-        if (missing.length) {
-          setInvalidFields(missing);
-          setErrorTop("Uzupełnij wszystkie wymagane pola.");
-          setModalData({
-            msg: "Za mało nam o sobie napisałeś! Musisz podać nazwę, e‑mail i hasło, aby utworzyć konto.",
-            gif: "/oops2.gif",
-          });
-          setShowError(true);
-          return;
+  const missing = [];
+  if (!email.trim()) missing.push("email");
+  if (!password.trim()) missing.push("password");
+  if (missing.length) {
+    setInvalidFields(missing);
+    setErrorTop("Uzupełnij wszystkie wymagane pola.");
+    setModalData({
+      msg: "Za mało nam o sobie napisałeś! Musisz podać nazwę, e‑mail i hasło, aby utworzyć konto.",
+      gif: "/oops2.gif",
+    });
+    setShowError(true);
+    return;
+  }
+
+  try {
+    // Logowanie
+    const response = await fetch("http://localhost:8080/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (response.status === 403) {
+        var banItems = errorText.split("|");
+        localStorage.setItem("username", email);
+        localStorage.setItem("banStart", banItems[0]);
+        localStorage.setItem("banEnd", banItems[1]);
+        localStorage.setItem("banReason", banItems[2]);
+        router.push("/");
+      } else if (response.status === 401 || response.status === 400) {
+        setErrorTop("Niepoprawny e‑mail lub hasło");
+        setModalData({
+          msg: "Spróbuj ponownie się zalogować lub zarejestruj się!",
+          gif: "/oops.gif",
+        });
+        setShowError(true);
+        setInvalidFields(["email", "password"]);
+        return;
+      } else {
+        setErrorTop(`Błąd ${response.status}: ${errorText}`);
+        setShowError(true);
+      }
+      return;
+    }
+
+    const token = await response.text();
+
+    if (token) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("email", email);
+
+      // Pobieranie danych użytkownika po tokenie
+      try {
+        const userResponse = await fetch(
+          `http://localhost:8080/userByToken?token=${token}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!userResponse.ok) {
+          throw new Error(`Błąd ${userResponse.status}`);
         }
 
-        try {
-
-            const response = await fetch("http://localhost:8080/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) {
-              const errorText = await response.text();
-              if (response.status === 403){
-                var banItems = errorText.split('|');
-                localStorage.setItem("username", email);
-                localStorage.setItem("banStart", banItems[0]);
-                localStorage.setItem("banEnd", banItems[1]);
-                localStorage.setItem("banReason", banItems[2]);
-                router.push('/');
-              }
-              else if (response.status === 401 || response.status === 400) {
-                setErrorTop("Niepoprawny e‑mail lub hasło");
-                setModalData({
-                  msg: "Spróbuj ponownie się zalogować lub zarejestruj się!",
-                  gif: "/oops.gif",
-                });
-                setShowError(true);
-                setInvalidFields(["email", "password"]);
-                return;
-              }
-              else{
-                //throw new Error(`Błąd ${response.status}: ${errorText}`);
-                setErrorTop(`Błąd ${res.status}: ${msg}`);
-                setShowError(true);
-              }
-            }
-            
-            const token = await response.text();
-
-            if (token) {
-                localStorage.setItem("token", token);
-                localStorage.setItem("email", email);
-                router.push('/');
-            } else {
-                throw new Error("Brak tokena w odpowiedzi serwera");
-            }
-
-        } catch (err) {
-          setErrorTop(err.message);
-        }
-  };
+        const userData = await userResponse.json();
+        setUserData(userData); // Zapisanie danych użytkownika do stanu
+        router.push("/"); // Przekierowanie po udanym logowaniu i pobraniu danych
+      } catch (error) {
+        setErrorTop(`Błąd pobierania danych użytkownika: ${error.message}`);
+        setShowError(true);
+        return;
+      }
+    } else {
+      throw new Error("Brak tokena w odpowiedzi serwera");
+    }
+  } catch (err) {
+    setErrorTop(err.message);
+    setShowError(true);
+  }
+};
 
   return (
     <>

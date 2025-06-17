@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,11 @@ public class JWTService {
   private UserRepository userRepository;
 
   private SecretKey secretKey;
+
+  @Autowired
+  public JWTService(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   @PostConstruct
   public void init() {
