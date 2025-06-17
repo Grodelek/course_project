@@ -22,8 +22,8 @@ public class RoadmapController {
   }
 
   @PostMapping("/add")
-  public ResponseEntity<?> addRoadmap(@RequestBody RoadmapDTO roadmapDTO) {
-    return roadmapService.addRoadmap(roadmapDTO);
+  public ResponseEntity<?> addRoadmap(@RequestParam String name) {
+    return roadmapService.addRoadmap(name);
   }
 
   @PutMapping("/update/{id}")

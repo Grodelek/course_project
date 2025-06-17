@@ -111,25 +111,18 @@ const dodajRoadmape = async () => {
   }
   const token = localStorage.getItem("token");
   try {
-    const res = await fetch("http://localhost:8080/roadmap/add", {
+    const res = await fetch(`http://localhost:8080/roadmap/add?name=${newRoadmapName}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        name: newRoadmapName,
-        courseIds: []
-      })
+      }
     });
     if (!res.ok) {
       const txt = await res.text();
       throw new Error(txt || `Błąd ${res.status}`);
     }
-    const nowaRoadmapa = await res.json();
-    setRoadmapsData(prev => [...prev, nowaRoadmapa]);
-    setAddModalOpen(false);
-    setNewRoadmapName("");
+    window.location.reload();
   } catch (e) {
     setError("Nie udało się dodać roadmapy: " + e.message);
   }

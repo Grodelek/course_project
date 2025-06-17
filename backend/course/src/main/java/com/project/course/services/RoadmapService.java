@@ -12,6 +12,7 @@ import com.project.course.models.Course;
 import com.project.course.models.Roadmap;
 import com.project.course.repositories.CourseRepository;
 import com.project.course.repositories.RoadmapRepository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class RoadmapService {
@@ -66,25 +67,14 @@ public class RoadmapService {
   }
 
   @Transactional
-  public ResponseEntity<?> addRoadmap(@RequestBody RoadmapDTO roadmapDTO) {
-    if (roadmapDTO.getName() == null || roadmapDTO.getName().isBlank()) {
+  public ResponseEntity<?> addRoadmap(@RequestParam String name) {
+    if (name == null || name.trim() == "") {
       return ResponseEntity.badRequest().body("Roadmap name is required");
-    }
-    List<Long> courseIds = roadmapDTO.getCourseIds();
-    if (courseIds == null || courseIds.isEmpty()) {
-      return ResponseEntity.badRequest().body("Course list cannot be empty.");
     }
 
     Roadmap roadmap = new Roadmap();
-    roadmap.setName(roadmapDTO.getName());
-    List<Course> courseList = courseRepository.findAllById(courseIds);
-    for (Course course : courseList) {
-      course.setRoadmap(roadmap);
-    }
-    roadmap.setCourseList(courseList);
+    roadmap.setName(name);
     roadmapRepository.save(roadmap);
-    courseRepository.saveAll(courseList);
-    updateRating(roadmap.getId());
 
     return ResponseEntity.ok("Roadmap added successfully");
   }
