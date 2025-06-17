@@ -31,6 +31,9 @@ public class User {
   private List<Comment> comments = new ArrayList<>();
 
   @ManyToMany
+  @JoinTable(name = "user_finished_roadmaps", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "roadmap_id"))
+  private List<Roadmap> finishedRoadmapsList;
+  @ManyToMany
   @JoinTable(name = "user_finished_courses", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
   private List<Course> finishedCoursesList;
   @ManyToMany

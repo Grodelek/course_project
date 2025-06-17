@@ -30,6 +30,7 @@ export default function StronaLekcji({ params }) {
   const [flash, setFlash] = useState(false);
   const [sectors, setSectors] = useState([]);
   const [lessons, setLessons] = useState([]);
+  const [lessonsNoQuiz, setLessonsNoQuiz] = useState([]);
   const [error, setError] = useState("");
   const kluczStorage = `kurs:${courseId}:lekcja:${lessonId}:ukonczona`;
 
@@ -70,6 +71,19 @@ export default function StronaLekcji({ params }) {
         }
         const data2 = await response2.json();
         setLessons(data2);
+
+        const response3 = await fetch("http://localhost:8080/lesson/getWithoutQuiz", {
+                  method: "GET",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+              });
+    
+              if (!response3.ok) {
+                  throw new Error(`Błąd `);
+              }
+              const data3 = await response3.json();
+              setLessonsNoQuiz(data3);
 
       } catch (err) {
           setError(err.message);
@@ -179,7 +193,7 @@ export default function StronaLekcji({ params }) {
             {flash && <span className="ml-2 text-xs">✔︎</span>}
           </button>
 
-          {maQuiz && (
+          {!lessonsNoQuiz.find((lessonNoQuiz) => lessonNoQuiz.id == lessonId) && (
             <div className="mt-10 inline-flex items-center gap-2 px-6 py-3 rounded-md transition">
               <Link
                 href={`/courses/${courseId}/${lessonId}/quiz`}

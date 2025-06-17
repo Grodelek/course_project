@@ -211,6 +211,32 @@ public class UserService {
     return userRepository.findFinishedLessonsIdsByUserEmail(email);
   }
 
+  public void isCourseFinished(String email, Long courseId){
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if(!userOptional.isPresent()){
+      return;
+    }
+
+    Optional<Course> courseOptional = courseRepository.findById(courseId);
+    if(!courseOptional.isPresent()){
+      return;
+    }
+    Course course = courseOptional.get();
+    List<Long> finishedLessons = getFinishedLessonsIdsByEmail(email);
+
+    int i = 0;
+    for(Lesson lesson : course.getLessons()){
+      if(finishedLessons.contains(lesson.getId())){
+        i++;
+      }
+    }
+
+    if(course.getLessons().size() == i){
+      addFinishedCourseByEmail(email, course.getId());
+    }
+
+  }
+
   @Transactional
   public ResponseEntity<?> addFinishedLessonByEmail(String email, Long lessonId) {
     Optional<User> userOptional = userRepository.findByEmail(email);
@@ -224,6 +250,7 @@ public class UserService {
         user.getFinishedLessonsList().add(lesson);
         userRepository.save(user);
       }
+      isCourseFinished(email, lesson.getCourse().getId());
       return ResponseEntity.ok("Course added to finished list.");
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found.");

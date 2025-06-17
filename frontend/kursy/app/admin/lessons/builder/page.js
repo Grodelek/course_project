@@ -104,7 +104,6 @@ export default function KreatorLekcji() {
           } catch (err) {
               setError(err.message);
           }
-          window.location.reload();
     };
 
   /* ---------- OPERACJE NA BLOKACH ---------- */
