@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   public boolean existsByUsername(String username);
 
+  public Optional<User> findByAuthToken(String token);
+
   @Query("SELECT c.id FROM User u JOIN u.finishedCoursesList c WHERE u.email = :email")
   List<Long> findFinishedCourseIdsByUserEmail(@Param("email") String email);
 

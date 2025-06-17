@@ -29,7 +29,8 @@ public class User {
   @OneToMany(mappedBy = "user")
   @JsonIgnore
   private List<Comment> comments = new ArrayList<>();
-
+  @Column(name = "auth_token")
+  private String authToken;
   @ManyToMany
   @JoinTable(name = "user_finished_roadmaps", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "roadmap_id"))
   private List<Roadmap> finishedRoadmapsList;
@@ -126,5 +127,13 @@ public class User {
 
   public void setFinishedRoadmapsList(List<Roadmap> finishedRoadmapsList) {
     this.finishedRoadmapsList = finishedRoadmapsList;
+  }
+
+  public String getAuthToken() {
+    return authToken;
+  }
+
+  public void setAuthToken(String authToken) {
+    this.authToken = authToken;
   }
 }

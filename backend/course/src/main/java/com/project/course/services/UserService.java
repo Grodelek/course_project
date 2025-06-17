@@ -39,16 +39,16 @@ public class UserService {
   private final RoadmapRepository roadmapRepository;
 
   public UserService(UserRepository userRepository,
-                     PasswordEncoder passwordEncoder,
-                     AuthenticationManager authenticationManager,
-                     JWTService jwtService,
-                     UserVerificationCodeService userVerificationCodeService,
-                     EmailSenderService emailSenderService,
-                     BanRepository banRepository,
-                     LessonRepository lessonRepository,
-                     CourseService courseService,
-                     CourseRepository courseRepository,
-                     RoadmapRepository roadmapRepository) {
+      PasswordEncoder passwordEncoder,
+      AuthenticationManager authenticationManager,
+      JWTService jwtService,
+      UserVerificationCodeService userVerificationCodeService,
+      EmailSenderService emailSenderService,
+      BanRepository banRepository,
+      LessonRepository lessonRepository,
+      CourseService courseService,
+      CourseRepository courseRepository,
+      RoadmapRepository roadmapRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
@@ -232,53 +232,53 @@ public class UserService {
     return userRepository.findFinishedLessonsIdsByUserEmail(email);
   }
 
-  public void isRoadmapFinished(String email, Long roadmapId){
+  public void isRoadmapFinished(String email, Long roadmapId) {
     Optional<User> userOptional = userRepository.findByEmail(email);
-    if(!userOptional.isPresent()){
+    if (!userOptional.isPresent()) {
       return;
     }
 
     Optional<Roadmap> roadmapOptional = roadmapRepository.findById(roadmapId);
-    if(!roadmapOptional.isPresent()){
+    if (!roadmapOptional.isPresent()) {
       return;
     }
     Roadmap roadmap = roadmapOptional.get();
     List<Long> finishedCourses = getFinishedCourseIdsByEmail(email);
 
     int i = 0;
-    for(Course course : roadmap.getCourseList()){
-      if(finishedCourses.contains(course.getId())){
+    for (Course course : roadmap.getCourseList()) {
+      if (finishedCourses.contains(course.getId())) {
         i++;
       }
     }
 
-    if(roadmap.getCourseList().size() == i){
+    if (roadmap.getCourseList().size() == i) {
       addFinishedRoadmapByEmail(email, roadmap.getId());
     }
 
   }
 
-  public void isCourseFinished(String email, Long courseId){
+  public void isCourseFinished(String email, Long courseId) {
     Optional<User> userOptional = userRepository.findByEmail(email);
-    if(!userOptional.isPresent()){
+    if (!userOptional.isPresent()) {
       return;
     }
 
     Optional<Course> courseOptional = courseRepository.findById(courseId);
-    if(!courseOptional.isPresent()){
+    if (!courseOptional.isPresent()) {
       return;
     }
     Course course = courseOptional.get();
     List<Long> finishedLessons = getFinishedLessonsIdsByEmail(email);
 
     int i = 0;
-    for(Lesson lesson : course.getLessons()){
-      if(finishedLessons.contains(lesson.getId())){
+    for (Lesson lesson : course.getLessons()) {
+      if (finishedLessons.contains(lesson.getId())) {
         i++;
       }
     }
 
-    if(course.getLessons().size() == i){
+    if (course.getLessons().size() == i) {
       addFinishedCourseByEmail(email, course.getId());
     }
 
@@ -396,7 +396,7 @@ public class UserService {
         }
       }
       int percentage = (all == 0) ? 0 : (int) ((finished * 100.0) / all);
-      if(percentage>0 && percentage<100){
+      if (percentage > 0 && percentage < 100) {
         response.add(new CourseProgressDTO(course.getName(), course.getId(), percentage));
       }
     }
@@ -404,9 +404,13 @@ public class UserService {
     return response;
   }
 
-
-
-  public List<User> findAllUsers(){
+  public List<User> findAllUsers() {
     return userRepository.findAll();
+  }
+
+  public String getEmailByToken(String token) {
+    return userRepository.findByAuthToken(token)
+        .map(User::getEmail)
+        .orElse("no Email found");
   }
 }

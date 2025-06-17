@@ -2,6 +2,8 @@ package com.project.course.controllers;
 
 import com.project.course.dto.*;
 import com.project.course.models.Course;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -98,23 +100,32 @@ public class UserController {
 
   @PostMapping("/change-username")
   public ResponseEntity<?> changeUsername(@Valid @RequestBody ChangeUsernameDTO changeUsernameDTO,
-                                          @RequestParam String email) {
+      @RequestParam String email) {
     return userService.changeUsername(changeUsernameDTO, email);
   }
 
   @PostMapping("/change-email")
   public ResponseEntity<?> changeEmail(@Valid @RequestBody ChangeEmailDTO changeEmailDTO,
-                                          @RequestParam String email) {
+      @RequestParam String email) {
     return userService.changeEmail(changeEmailDTO, email);
   }
 
   @GetMapping("/coursesPercentage")
-  public List<CourseProgressDTO> getCoursePercentage(@RequestParam String email){
+  public List<CourseProgressDTO> getCoursePercentage(@RequestParam String email) {
     return userService.getCoursesPercentage(email);
   }
 
   @GetMapping("/allUsers")
-  public List<User> getAllUsers (){
+  public List<User> getAllUsers() {
     return userService.findAllUsers();
+  }
+
+  @GetMapping("/email")
+  public ResponseEntity<String> getEmailByToken(@RequestParam String token) {
+    String email = userService.getEmailByToken(token);
+    if (email.equals("no Email found")) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for provided token");
+    }
+    return ResponseEntity.ok(email);
   }
 }

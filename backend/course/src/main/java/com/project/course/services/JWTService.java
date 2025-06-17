@@ -5,12 +5,16 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.project.course.models.User;
+import com.project.course.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -21,6 +25,7 @@ import jakarta.annotation.PostConstruct;
 public class JWTService {
   @Value("${jwt.secret}")
   private String key;
+  private UserRepository userRepository;
 
   private SecretKey secretKey;
 
@@ -56,6 +61,13 @@ public class JWTService {
         .and()
         .signWith(getKey())
         .compact();
+
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      user.setAuthToken(token);
+      userRepository.save(user);
+    }
     System.out.println("Generated token for user " + email + ": " + token);
     return token;
   }
