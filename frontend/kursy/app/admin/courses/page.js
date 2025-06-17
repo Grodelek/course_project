@@ -13,6 +13,9 @@ export default function Courses() {
   const [editCourseName, setEditCourseName] = useState("");
   const [editCourseDescription, setEditCourseDescription] = useState("");
   const [editRoadmapId, setEditRoadmapId] = useState("");
+  const [addModalOpen, setAddModalOpen]       = useState(false);
+  const [newCourseName, setNewCourseName]     = useState("");
+  const [newCourseDescription, setNewCourseDescription] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -140,6 +143,34 @@ export default function Courses() {
       setError(err.message);
     }
   };
+  
+  const dodajKurs = async () => {
+  if (!newCourseName.trim()) {
+    setError("Nazwa kursu nie może być pusta");
+    return;
+  }
+  try {
+    const res = await fetch("http://localhost:8080/course/add", {
+      method : "POST",
+      headers: { "Content-Type": "application/json" },
+      body   : JSON.stringify({
+        name       : newCourseName,
+        description: newCourseDescription,
+      }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+
+    const fresh = await fetch("http://localhost:8080/course/all").then(r=>r.json());
+    setCoursesData(fresh);
+
+    setAddModalOpen(false);
+    setNewCourseName("");
+    setNewCourseDescription("");
+  } catch (e) {
+    setError("Błąd dodawania kursu: " + e.message);
+  }
+};
+
 
   const usuńKurs = async (id) => {
     const course = coursesData.find((c) => c.id === id);
@@ -195,6 +226,16 @@ export default function Courses() {
 
         <div className="relative z-10 container mx-auto px-4">
           <h1 className="text-4xl font-bold text-center mb-8 text-white">Kursy</h1>
+<div className="flex justify-between items-center mb-4">
+  <h1 className="text-4xl font-bold text-white">Kursy</h1>
+
+  <button
+    onClick={() => setAddModalOpen(true)}
+    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"
+  >
+    + Nowy kurs
+  </button>
+</div>
 
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
@@ -260,34 +301,83 @@ export default function Courses() {
                 )}
               </tbody>
             </table>
+            {addModalOpen && (
+              <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+                <div className="w-full max-w-lg bg-white/10 border border-white/30 rounded-2xl p-8 text-white shadow-2xl">
+                  <h2 className="text-2xl font-bold mb-6 text-center">Dodaj nowy kurs</h2>
+
+                  <label className="block text-sm font-medium mb-1">Nazwa kursu</label>
+                  <input
+                    type="text"
+                    value={newCourseName}
+                    onChange={(e) => setNewCourseName(e.target.value)}
+                    className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-2 mb-4 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+                    placeholder="np. HTML od podstaw"
+                  />
+
+                  <label className="block text-sm font-medium mb-1">Opis (opcjonalnie)</label>
+                  <textarea
+                    rows={3}
+                    value={newCourseDescription}
+                    onChange={(e) => setNewCourseDescription(e.target.value)}
+                    className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-2 mb-6 placeholder-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-green-400"
+                    placeholder="Krótki opis kursu"
+                  />
+
+                  {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={() => {
+                        setAddModalOpen(false);
+                        setNewCourseName("");
+                        setNewCourseDescription("");
+                        setError("");
+                      }}
+                      className="px-5 py-2 rounded-lg bg-gray-500/40 hover:bg-gray-500/60 transition"
+                    >
+                      Anuluj
+                    </button>
+
+                    <button
+                      onClick={dodajKurs}
+                      className="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 font-semibold shadow-md transition"
+                    >
+                      Zapisz
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
 
             {editModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
-                  <h2 className="text-xl font-bold mb-4">Edytuj kurs</h2>
+              <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+                <div className="w-full max-w-lg bg-white/10 border border-white/30 rounded-2xl p-8 text-white shadow-2xl">
+                  <h2 className="text-2xl font-bold mb-6 text-center">Edytuj kurs</h2>
 
-                  <label className="block mb-1 text-sm">Nazwa kursu:</label>
+                  <label className="block text-sm font-medium mb-1">Nazwa kursu</label>
                   <input
                     type="text"
                     value={editCourseName}
                     onChange={(e) => setEditCourseName(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-2 mb-4 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
 
-                  <label className="block mb-1 text-sm">Opis:</label>
+                  <label className="block text-sm font-medium mb-1">Opis</label>
                   <textarea
                     rows={3}
                     value={editCourseDescription}
                     onChange={(e) => setEditCourseDescription(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-2 mb-4 placeholder-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="Wprowadź opis kursu"
                   />
 
-                  <label className="block mb-1 text-sm">Roadmapa:</label>
+                  <label className="block text-sm font-medium mb-1">Roadmapa</label>
                   <select
                     value={editRoadmapId}
                     onChange={(e) => setEditRoadmapId(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-2 mb-6 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">Brak roadmapy</option>
                     {roadmapsData.map((roadmap) => (
@@ -297,22 +387,23 @@ export default function Courses() {
                     ))}
                   </select>
 
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-end gap-3">
                     <button
                       onClick={() => {
                         setEditModalOpen(false);
+                        setSelectedCourseId(null);
                         setEditCourseName("");
                         setEditCourseDescription("");
                         setEditRoadmapId("");
-                        setSelectedCourseId(null);
                       }}
-                      className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition"
+                      className="px-5 py-2 rounded-lg bg-gray-500/40 hover:bg-gray-500/60 transition"
                     >
                       Anuluj
                     </button>
+
                     <button
                       onClick={zapiszEdycjeKursu}
-                      className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white transition"
+                      className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-semibold shadow-md transition"
                     >
                       Zapisz
                     </button>
@@ -320,6 +411,7 @@ export default function Courses() {
                 </div>
               </div>
             )}
+
 
             <div className="mt-4 flex justify-center space-x-2">
               <button
