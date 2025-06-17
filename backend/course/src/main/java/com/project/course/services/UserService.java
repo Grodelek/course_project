@@ -3,10 +3,7 @@ package com.project.course.services;
 import com.project.course.dto.*;
 import com.project.course.exceptions.UserAlreadyExistsException;
 import com.project.course.models.*;
-import com.project.course.repositories.BanRepository;
-import com.project.course.repositories.CourseRepository;
-import com.project.course.repositories.LessonRepository;
-import com.project.course.repositories.UserRepository;
+import com.project.course.repositories.*;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
@@ -39,6 +36,7 @@ public class UserService {
   private final BanRepository banRepository;
   private final LessonRepository lessonRepository;
   private final CourseService courseService;
+  private final RoadmapRepository roadmapRepository;
 
   public UserService(UserRepository userRepository,
                      PasswordEncoder passwordEncoder,
@@ -49,7 +47,8 @@ public class UserService {
                      BanRepository banRepository,
                      LessonRepository lessonRepository,
                      CourseService courseService,
-                     CourseRepository courseRepository) {
+                     CourseRepository courseRepository,
+                     RoadmapRepository roadmapRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
@@ -60,6 +59,7 @@ public class UserService {
     this.lessonRepository = lessonRepository;
     this.courseService = courseService;
     this.courseRepository = courseRepository;
+    this.roadmapRepository = roadmapRepository;
   }
 
   @Autowired
@@ -197,9 +197,30 @@ public class UserService {
         userRepository.save(user);
       }
 
+      isRoadmapFinished(email, course.getRoadmap().getId());
       return ResponseEntity.ok("Course added to finished list.");
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found.");
+    }
+  }
+
+  @Transactional
+  public ResponseEntity<?> addFinishedRoadmapByEmail(String email, Long roadmapId) {
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    Optional<Roadmap> roadmapOptional = roadmapRepository.findById(roadmapId);
+
+    if (userOptional.isPresent() && roadmapOptional.isPresent()) {
+      User user = userOptional.get();
+      Roadmap roadmap = roadmapOptional.get();
+
+      if (!user.getFinishedRoadmapsList().contains(roadmap)) {
+        user.getFinishedRoadmapsList().add(roadmap);
+        userRepository.save(user);
+      }
+
+      return ResponseEntity.ok("Roadmap added to finished list.");
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Roadmap not found.");
     }
   }
 
@@ -209,6 +230,32 @@ public class UserService {
 
   public List<Long> getFinishedLessonsIdsByEmail(String email) {
     return userRepository.findFinishedLessonsIdsByUserEmail(email);
+  }
+
+  public void isRoadmapFinished(String email, Long roadmapId){
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if(!userOptional.isPresent()){
+      return;
+    }
+
+    Optional<Roadmap> roadmapOptional = roadmapRepository.findById(roadmapId);
+    if(!roadmapOptional.isPresent()){
+      return;
+    }
+    Roadmap roadmap = roadmapOptional.get();
+    List<Long> finishedCourses = getFinishedCourseIdsByEmail(email);
+
+    int i = 0;
+    for(Course course : roadmap.getCourseList()){
+      if(finishedCourses.contains(course.getId())){
+        i++;
+      }
+    }
+
+    if(roadmap.getCourseList().size() == i){
+      addFinishedRoadmapByEmail(email, roadmap.getId());
+    }
+
   }
 
   public void isCourseFinished(String email, Long courseId){

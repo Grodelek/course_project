@@ -18,9 +18,9 @@ public class Course {
   @Column(name = "description")
   private String description;
   @Column(name = "length")
-  private int length;
+  private Integer length;
   @Column(name = "rating")
-  private int rating;
+  private Integer rating;
   @ManyToOne
   @JoinColumn(name = "roadmap_id")
   @JsonIgnore

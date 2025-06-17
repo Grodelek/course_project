@@ -111,4 +111,20 @@ public class User {
   public void setFinishedCoursesList(List<Course> finishedCoursesList) {
     this.finishedCoursesList = finishedCoursesList;
   }
+
+  public List<Comment> getComments() {
+    return comments;
+  }
+
+  public void setComments(List<Comment> comments) {
+    this.comments = comments;
+  }
+
+  public List<Roadmap> getFinishedRoadmapsList() {
+    return finishedRoadmapsList;
+  }
+
+  public void setFinishedRoadmapsList(List<Roadmap> finishedRoadmapsList) {
+    this.finishedRoadmapsList = finishedRoadmapsList;
+  }
 }
