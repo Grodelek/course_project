@@ -3,7 +3,7 @@ package com.project.course.dto;
 public class CourseDTO {
   private String name;
   private String description;
-  private String length;
+  private Long roadmapId;
 
   public String getName() {
     return this.name;
@@ -21,11 +21,11 @@ public class CourseDTO {
     this.description = description;
   }
 
-  public String getLength() {
-    return this.length;
+  public Long getRoadmapId() {
+    return this.roadmapId;
   }
 
-  public void setLength(String length) {
-    this.length = length;
+  public void setRoadmapId(Long roadmapId) {
+    this.roadmapId = roadmapId;
   }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class RoadmapDTO {
   private String name;
-  private List<String> courseTitles;
+  private List<Long> courseIds;
 
   public String getName() {
     return name;
@@ -14,12 +14,11 @@ public class RoadmapDTO {
     this.name = name;
   }
 
-  public List<String> getCourseTitles() {
-    return courseTitles;
+  public List<Long> getCourseIds() {
+    return courseIds;
   }
 
-  public void setCourseTitles(List<String> courseTitles) {
-    this.courseTitles = courseTitles;
+  public void setCourseIds(List<Long> courseIds) {
+    this.courseIds = courseIds;
   }
-
 }

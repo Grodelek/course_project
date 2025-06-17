@@ -3,6 +3,7 @@ package com.project.course.controllers;
 import java.util.List;
 
 import com.project.course.dto.LessonDTO;
+import com.project.course.dto.LessonUpdateDTO;
 import com.project.course.models.Lesson;
 import com.project.course.services.LessonService;
 import jakarta.validation.Valid;
@@ -33,4 +34,14 @@ public class LessonController {
 
     @GetMapping("/getWithoutQuiz")
     public List<Lesson> getWithoutQuiz() {return lessonService.getWithoutQuiz();}
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateLesson(@RequestBody LessonUpdateDTO lessonUpdateDTO,@PathVariable Long id) {
+        return lessonService.updateLesson(lessonUpdateDTO, id);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteLesson(@PathVariable Long id){
+        return lessonService.deleteLessonNormal(id);
+    }
 }

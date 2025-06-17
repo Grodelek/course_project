@@ -18,7 +18,7 @@ public class Course {
   @Column(name = "description")
   private String description;
   @Column(name = "length")
-  private String length;
+  private int length;
   @Column(name = "rating")
   private int rating;
   @ManyToOne
@@ -67,11 +67,11 @@ public class Course {
     this.description = description;
   }
 
-  public String getLength() {
+  public int getLength() {
     return this.length;
   }
 
-  public void setLength(String length) {
+  public void setLength(int length) {
     this.length = length;
   }
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.course.dto.LessonUpdateDTO;
 import com.project.course.models.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,43 @@ public class LessonService {
   public LessonService(LessonRepository lessonRepository, CourseRepository courseRepository) {
     this.lessonRepository = lessonRepository;
     this.courseRepository = courseRepository;
+  }
+
+  @Transactional
+  public ResponseEntity<?> updateLesson(@RequestBody LessonUpdateDTO lessonDTO, @PathVariable Long lessonId) {
+    if (lessonDTO.getName() == null || lessonDTO.getName().isEmpty()) {
+      return ResponseEntity.badRequest().body("Lesson name is empty");
+    }
+
+    Optional<Lesson> lessonOpt = lessonRepository.findById(lessonId);
+    if (!lessonOpt.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lesson not found with ID " + lessonId);
+    }
+
+    Optional<Course> courseOpt = courseRepository.findById(lessonDTO.getCourseId());
+    if (!courseOpt.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found with ID " + lessonDTO.getCourseId());
+    }
+
+    Lesson lesson = lessonOpt.get();
+    Course newCourse = courseOpt.get();
+
+    // Update lesson details
+    lesson.setName(lessonDTO.getName());
+    lesson.setDescription(lessonDTO.getDescription());
+
+    // Update course association if changed
+    if (!lesson.getCourse().getId().equals(lessonDTO.getCourseId())) {
+      Course oldCourse = lesson.getCourse();
+      oldCourse.getLessons().remove(lesson); // Remove lesson from old course
+      lesson.setCourse(newCourse); // Set new course
+      newCourse.getLessons().add(lesson); // Add lesson to new course
+      courseRepository.save(oldCourse); // Save old course to update its lessons
+      courseRepository.save(newCourse); // Save new course to update its lessons
+    }
+
+    Lesson updatedLesson = lessonRepository.save(lesson);
+    return ResponseEntity.status(HttpStatus.OK).body(updatedLesson.getId());
   }
 
   @Transactional
@@ -57,6 +95,16 @@ public class LessonService {
         lessonRepository.delete(element);
       }
     }
+    return ResponseEntity.ok().body("Lesson deleted");
+  }
+
+  public ResponseEntity<?> deleteLessonNormal(@PathVariable Long lessonId) {
+    Optional<Lesson> lessonOptional = lessonRepository.findById(lessonId);
+    if(!lessonOptional.isPresent()){
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lesson not found with ID " + lessonId);
+    }
+    Lesson lesson = lessonOptional.get();
+    lessonRepository.delete(lesson);
     return ResponseEntity.ok().body("Lesson deleted");
   }
 

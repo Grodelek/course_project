@@ -58,7 +58,8 @@ public class SecurityConfig {
                 "/question/lesson/*", "user/delete/*",
                 "/*/finished-lessons/*", "/comment/*", "/reset-password", "/change-username", "/change-email",
                     "/coursesPercentage", "/allUsers", "/lesson/all", "/sector/add", "/lesson/add", "/lesson/getWithoutQuiz",
-                "/answer/add", "question/add")
+                "/answer/add", "question/add", "/course/update/*", "/course/delete/*", "lesson/update/*", "/lesson/delete/*",
+                    "/roadmap/update/*", "/roadmap/delete/*")
             .permitAll()
             .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
