@@ -83,6 +83,7 @@ public class LessonService {
     Course course = courseOpt.get();
     lesson.setCourse(course);
     course.getLessons().add(lesson);
+    course.setLength(course.getLessons().size());
     Lesson lessonSaved = lessonRepository.save(lesson);
     courseRepository.save(course);
     return ResponseEntity.status(HttpStatus.OK).body(lessonSaved.getId());
