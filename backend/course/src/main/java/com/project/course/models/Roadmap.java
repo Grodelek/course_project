@@ -19,10 +19,10 @@ public class Roadmap {
   @Column(name = "rating")
   private int rating;
 
-  @OneToMany(mappedBy = "roadmap", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "roadmap", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Course> courseList;
 
-  @ManyToMany(mappedBy = "finishedRoadmapsList")
+  @ManyToMany(mappedBy = "finishedRoadmapsList", cascade = CascadeType.ALL)
   @JsonIgnore
   private List<User> users;
 

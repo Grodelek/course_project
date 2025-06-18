@@ -18,7 +18,7 @@ public class Question {
     @JoinColumn(name = "lesson_id")
     @JsonIgnore
     private Lesson lesson;
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
     public Long getId() {

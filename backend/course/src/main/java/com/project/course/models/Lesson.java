@@ -21,13 +21,13 @@ public class Lesson {
   @ManyToOne
   @JoinColumn(name = "course_id")
   private Course course;
-  @ManyToMany(mappedBy = "finishedLessonsList")
+  @ManyToMany(mappedBy = "finishedLessonsList", cascade = CascadeType.ALL)
   @JsonIgnore
   private List<User> users;
-  @OneToMany(mappedBy = "lesson")
+  @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
   @JsonIgnore
   private List<Sector> sectors = new ArrayList<>();
-  @OneToMany(mappedBy = "lesson")
+  @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
   @JsonIgnore
   private List<Question> questions = new ArrayList<>();
 

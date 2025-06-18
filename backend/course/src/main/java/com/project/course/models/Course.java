@@ -25,7 +25,7 @@ public class Course {
   @JoinColumn(name = "roadmap_id")
   @JsonIgnore
   private Roadmap roadmap;
-  @ManyToMany(mappedBy = "finishedCoursesList")
+  @ManyToMany(mappedBy = "finishedCoursesList", cascade = CascadeType.ALL)
   @JsonIgnore
   private List<User> users;
   @OneToMany(mappedBy = "course")

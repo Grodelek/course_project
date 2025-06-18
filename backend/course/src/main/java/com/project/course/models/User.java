@@ -26,7 +26,7 @@ public class User {
   private char isConfirmed;
   @Column(name = "photo_path")
   private String photoPath;
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIgnore
   private List<Comment> comments = new ArrayList<>();
   @Column(name = "auth_token")
