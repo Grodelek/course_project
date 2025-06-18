@@ -183,16 +183,6 @@ export default function StronaLekcji({ params }) {
             {sectors.map(renderSektor)}
           </article>
 
-          <button
-            onClick={toggleUkonczona}
-            className={`mt-10 inline-flex items-center gap-2 px-6 py-3 rounded-md transition
-              ${ukonczona ? "bg-green-600 hover:bg-green-700" : "bg-white/20 hover:bg-white/30"}`}
-          >
-            {ukonczona && <FaCheck />}
-            {ukonczona ? "Lekcja ukończona" : "Oznacz jako ukończoną"}
-            {flash && <span className="ml-2 text-xs">✔︎</span>}
-          </button>
-
           {!lessonsNoQuiz.find((lessonNoQuiz) => lessonNoQuiz.id == lessonId) && (
             <div className="mt-10 inline-flex items-center gap-2 px-6 py-3 rounded-md transition">
               <Link

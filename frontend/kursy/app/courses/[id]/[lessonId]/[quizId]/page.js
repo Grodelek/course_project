@@ -208,12 +208,6 @@ export default function QuizLekcji({ params }) {
                     >
                       Wróć do kursu
                     </a>
-                    <a
-                      href={`/courses/${courseId}/123`}
-                      className="px-5 py-2 rounded-md bg-green-600 hover:bg-green-700"
-                    >
-                      Przejdź do następnej lekcji
-                    </a>
                   </div>
                 </div>
               ) : (
