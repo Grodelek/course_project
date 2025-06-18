@@ -270,7 +270,7 @@ export default function Courses() {
                     <tr key={course.id} className="border-b border-white/20">
                       <td className="px-6 py-4 whitespace-nowrap">{course.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{course.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{course.description}</td>
+                      <td className="px-6 py-1 max-w-3xs">{course.description}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{course.length}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{roadmap ? roadmap.name : "Brak"}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -377,7 +377,7 @@ export default function Courses() {
                   <select
                     value={editRoadmapId}
                     onChange={(e) => setEditRoadmapId(e.target.value)}
-                    className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-2 mb-6 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full bg-white/20 border border-white/30 rounded-lg px-4 py-2 mb-6 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                   >
                     <option value="">Brak roadmapy</option>
                     {roadmapsData.map((roadmap) => (

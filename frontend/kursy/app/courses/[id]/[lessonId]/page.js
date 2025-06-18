@@ -102,16 +102,6 @@ export default function StronaLekcji({ params }) {
     );
   }
 
-  if (lessons.length === 0) {
-    return (
-      <Brama>
-        <div className="flex items-center justify-center min-h-screen text-white">
-          <h1 className="text-3xl">Lekcja nie została znaleziona.</h1>
-        </div>
-      </Brama>
-    );
-  }
-
   sectors.sort((a,b) => a.place - b.place);
   const thisLesson = lessons.findIndex(lesson => lesson.id === Number(lessonId));
   const poprzedniaLekcja = lessons[thisLesson-1];
